@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Application xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Northampton.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <Style TargetType="NavigationPage">
+                <Setter Property="BarBackgroundColor" Value="#972228" />
+                <Setter Property="BarTextColor" Value="Color.White" />
+            </Style>
+            <Style x:Key="pageStyle" TargetType="ContentPage">
+                <Setter Property="BackgroundColor" Value="#fefefe" />
+            </Style>
+            <Style x:Key="buttonStyle" TargetType="Button">
+                <Setter Property="HorizontalOptions" Value="Center" />
+                <Setter Property="VerticalOptions" Value="CenterAndExpand" />
+                <Setter Property="BackgroundColor" Value="#ffffff" />
+                <Setter Property="BorderColor" Value="Gray" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="BorderWidth" Value="3" />
+                <Setter Property="WidthRequest" Value="200" />
+                <Setter Property="TextColor" Value="Black" />
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
