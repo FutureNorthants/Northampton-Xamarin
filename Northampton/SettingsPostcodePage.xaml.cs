@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using Xamarin.Forms;
 
 namespace Northampton
 {
-    public partial class SettingsNamePage : ContentPage
+    public partial class SettingsPostcodePage : ContentPage
     {
-        public SettingsNamePage()
+        public SettingsPostcodePage()
         {
             InitializeComponent();
         }

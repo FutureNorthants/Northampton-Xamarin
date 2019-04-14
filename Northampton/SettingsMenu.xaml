@@ -8,7 +8,7 @@
                VerticalOptions="CenterAndExpand"
                HorizontalOptions="Center" />
             <Button Text="My Name" Style="{StaticResource buttonStyle}" Clicked="NameButtonClicked"/>
-            <Button Text="My Postcode" Style="{StaticResource buttonStyle}" Clicked="OnButtonClicked"/>
+            <Button Text="My Postcode" Style="{StaticResource buttonStyle}" Clicked="PostcodeButtonClicked"/>
             <Button Text="My Phone Number" Style="{StaticResource buttonStyle}" Clicked="OnButtonClicked"/>
             <Button Text="My Email Address" Style="{StaticResource buttonStyle}" Clicked="OnButtonClicked"/>
         </FlexLayout>

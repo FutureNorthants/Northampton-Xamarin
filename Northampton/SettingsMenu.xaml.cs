@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-
 using Xamarin.Forms;
 
 namespace Northampton
@@ -15,6 +13,11 @@ namespace Northampton
         async void NameButtonClicked(object sender, EventArgs args)
         {
             await Navigation.PushAsync(new SettingsNamePage());
+        }
+
+        async void PostcodeButtonClicked(object sender, EventArgs args)
+        {
+            await Navigation.PushAsync(new SettingsPostcodePage());
         }
 
         async void OnButtonClicked(object sender, EventArgs args)

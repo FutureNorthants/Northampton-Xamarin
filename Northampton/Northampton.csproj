@@ -16,8 +16,13 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Remove="MainTab.xaml" />
+    <EmbeddedResource Remove="SettingsNamePage %28copy%29.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="MainTab.xaml.cs" />
+    <Compile Remove="SettingsNamePage %28copy%29.xaml.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ViewModels\" />
   </ItemGroup>
 </Project>
