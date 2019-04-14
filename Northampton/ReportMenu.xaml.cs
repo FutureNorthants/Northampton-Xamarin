@@ -5,9 +5,9 @@ using Xamarin.Forms;
 
 namespace Northampton
 {
-    public partial class ReportPage : ContentPage
+    public partial class ReportMenu : ContentPage
     {
-        public ReportPage()
+        public ReportMenu()
         {
             InitializeComponent();
         }

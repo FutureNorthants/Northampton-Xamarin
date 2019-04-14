@@ -2,7 +2,7 @@
 <TabbedPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Northampton.MainPage" xmlns:local="clr-namespace:Northampton;assembly=Northampton" Title="TabbedPage">
     <NavigationPage Title="Report" Icon="reportit.png">
         <x:Arguments>
-            <local:ReportPage/>
+            <local:ReportMenu/>
         </x:Arguments>
     </NavigationPage>
   <ContentPage Title="Find" Icon="find.png">  
@@ -11,10 +11,9 @@
       <BoxView Color="Green" VerticalOptions="FillAndExpand" />  
     </StackLayout>  
   </ContentPage>  
-  <ContentPage Title="Settings" Icon="settings.png">  
-    <StackLayout>  
-      <Label Text="Blue" HorizontalTextAlignment="Center" HorizontalOptions="FillAndExpand" Margin="5"  />  
-      <BoxView Color="Blue" VerticalOptions="FillAndExpand" />  
-    </StackLayout>  
-  </ContentPage>  
+  <NavigationPage Title="Settings" Icon="settings.png">
+       <x:Arguments>
+            <local:SettingsMenu/>
+        </x:Arguments>
+  </NavigationPage>  
 </TabbedPage>
