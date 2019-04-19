@@ -4,6 +4,7 @@ using Xamarin.Essentials;
 using System.Threading.Tasks;
 using System.Net;
 using System.IO;
+using Northampton;
 
 namespace Northampton
 {
@@ -12,6 +13,7 @@ namespace Northampton
         public ReportCurrentLocationPage()
         {
             InitializeComponent();
+            //BindingContext = new ReportCurrentLocationViewModel();
             //Task<Location> locationTask = GetCurrentLocation();
             GetCurrentLocation();
         }
