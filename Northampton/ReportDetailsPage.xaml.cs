@@ -5,9 +5,9 @@ using Xamarin.Forms;
 
 namespace Northampton
 {
-    public partial class ReportByMapPage : ContentPage
+    public partial class ReportDetailsPage : ContentPage
     {
-        public ReportByMapPage()
+        public ReportDetailsPage()
         {
             InitializeComponent();
             //monkeyNameLabel.SetBinding(Label.TextProperty, new Binding("SelectedItem", source: picker));
@@ -15,7 +15,7 @@ namespace Northampton
 
         void OnPickerSelectedIndexChanged(object sender, EventArgs e)
         {
-            var picker = (Picker)sender;
+            //var picker = (Picker)sender;
             int selectedIndex = picker.SelectedIndex;
 
             if (selectedIndex != -1)
@@ -23,5 +23,11 @@ namespace Northampton
                 //monkeyNameLabel.Text = (string)picker.ItemsSource[selectedIndex];
             }
         }
+
+        async void SubmitButtonClicked(object sender, EventArgs args)
+        {
+            await Navigation.PushAsync(new SettingsNamePage());
+        }
+
     }
 }

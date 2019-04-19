@@ -14,9 +14,9 @@ namespace Northampton
 
         }
 
-        async void OnUpcomingAppointmentsButtonClicked(object sender, EventArgs e)
+        async void AtThisLocationButtonClicked(object sender, EventArgs args)
         {
-            //await Navigation.PushAsync(new UpcomingAppointmentsPage());
+            await Navigation.PushAsync(new ReportDetailsPage());
         }
 
     }

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Northampton.ReportDetailsPage" Title="Report a Problem" Style="{StaticResource pageStyle}">
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout Margin="30" Spacing="30">
+                <Picker x:Name="picker" Title="Select problem here" TitleColor="Gray">
+                    <Picker.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String>Litter</x:String>
+                            <x:String>Flytipping</x:String>
+                            <x:String>Bodily Fluids</x:String>
+                            <x:String>Broken Glass</x:String>
+                            <x:String>Dead Animal</x:String>
+                            <x:String>Dog Fouling</x:String>
+                            <x:String>Drug Paraphernalia</x:String>
+                            <x:String>Flyposting - Non Offensive</x:String>
+                            <x:String>Flyposting - Offensive</x:String>
+                            <x:String>Graffiti - Non Offensive</x:String>
+                            <x:String>Graffiti - Offensive</x:String>
+                            <x:String>Gum Removal</x:String>
+                            <x:String>Leaf Clearance</x:String>
+                            <x:String>Litter Bin Overflowing</x:String>
+                            <x:String>Street Sign Cleaning</x:String>
+                            <x:String>Street Washing</x:String>
+                            <x:String>Sweeper Bags Not Collected</x:String>
+                            <x:String>Sweeping Required</x:String>
+                            <x:String>Weed Clearance</x:String>
+                        </x:Array>
+                    </Picker.ItemsSource>
+                </Picker>
+                <Editor Placeholder="Enter description here" PlaceholderColor="Gray" AutoSize="TextChanges" HeightRequest="260" />
+                <Button Text="Submit" Style="{StaticResource buttonStyle}" Clicked="SubmitButtonClicked" />
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>
