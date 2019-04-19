@@ -16,7 +16,7 @@ namespace Northampton
 
         async void AtThisLocationButtonClicked(object sender, EventArgs args)
         {
-            await Navigation.PushAsync(new ReportDetailsPage());
+            await Navigation.PushAsync(new ReportCurrentLocationPage());
         }
 
     }

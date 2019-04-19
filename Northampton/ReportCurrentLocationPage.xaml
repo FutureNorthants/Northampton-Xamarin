@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Northampton.ReportCurrentLocationPage" xmlns:local="clr-namespace:Northampton;assembly=Northampton" Title="Report a Problem" Style="{StaticResource pageStyle}">
+    <ContentPage.Content>
+               <ScrollView>
+            <StackLayout Margin="30" Spacing="30">
+                <Picker x:Name="picker" 
+                        Title="Confirm the nearest street here" 
+                        TitleColor="Gray"
+                        ItemsSource="{Binding ReportCurrentLocationViewModel, Mode=TwoWay}"
+                        ItemDisplayBinding="{Binding streets, Mode=TwoWay}">
+                </Picker>
+                <Editor Placeholder="Enter description here" PlaceholderColor="Gray" AutoSize="TextChanges" HeightRequest="260" />
+                <Button Text="Submit" Style="{StaticResource buttonStyle}" Clicked="SubmitButtonClicked" />
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>
