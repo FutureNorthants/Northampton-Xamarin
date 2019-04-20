@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Xamarin.Forms;
 
 namespace Northampton
@@ -31,14 +33,6 @@ namespace Northampton
 
         public IList<String> streets
         {
-            //get
-            //{
-            //    IList<String> tempStreets = new List<string>();
-            //    tempStreets.Add("D");
-            //    tempStreets.Add("E");
-            //    tempStreets.Add("F");
-            //    return tempStreets;
-            //}
             get
             {
                 String streetsJson = null;
@@ -47,11 +41,33 @@ namespace Northampton
                     streetsJson = Application.Current.Properties["JsonStreets"] as String;
                 }
                 IList<String> tempStreets = new List<string>();
-                tempStreets.Add("D");
-                tempStreets.Add("E");
-                tempStreets.Add("F");
+                JObject streetsJSONobject = JObject.Parse(streetsJson);
+                JArray resultsArray = (JArray)streetsJSONobject["results"];
+                for(int currentResult = 0; currentResult < resultsArray.Count; currentResult++)
+                {
+                    tempStreets.Add(resultsArray[currentResult][1].ToString());
+                }
                 return tempStreets;
             }
         }
+    }
+
+    public class jsonResults
+    {
+        public IList<string> Parameters { get; set; }
+        public string DateSubmitted { get; set; }
+        public IList<Streets> Results { get; set; }
+    }
+
+    public class Parameters
+    {
+        public string Latitude { get; set; }
+        public string Longtitude { get; set; }
+    }
+
+    public class Streets
+    {
+        public string USRN { get; set; }
+        public string StreetName { get; set; }
     }
 }

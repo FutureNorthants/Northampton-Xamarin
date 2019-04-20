@@ -3,9 +3,8 @@
     <ContentPage.Content>
         <ScrollView>
             <StackLayout Margin="30" Spacing="30">
-                                   <Picker x:Name="streetPicker" Title="Confirm the nearest street here" TitleColor="Gray" ItemsSource="{Binding streets}">
-                      
-                    </Picker>
+                <Picker x:Name="streetPicker" Title="Confirm the nearest street here" TitleColor="Gray" ItemsSource="{Binding streets}">
+                </Picker>
                 <Picker x:Name="typePicker" Title="Select problem here" TitleColor="Gray">
                     <Picker.ItemsSource>
                         <x:Array Type="{x:Type x:String}">
