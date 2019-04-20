@@ -9,25 +9,30 @@ namespace Northampton
 {
     public partial class ReportDetailsPage : ContentPage
     {
+        private int typePickerIndex = -1;
+        IList<Street> storedStreets = new List<Street>();
+
         public ReportDetailsPage()
         {
             InitializeComponent();
             BindingContext = this;
         }
 
-        void OnPickerSelectedIndexChanged(object sender, EventArgs e)
+        public int TypePickerIndex
         {
-            //var picker = (Picker)sender;
-            int selectedIndex = typePicker.SelectedIndex;
-
-            if (selectedIndex != -1)
+            get
             {
-                //monkeyNameLabel.Text = (string)picker.ItemsSource[selectedIndex];
+                return typePickerIndex;
+            }
+            set
+            {
+                typePickerIndex=value;
             }
         }
 
         async void SubmitButtonClicked(object sender, EventArgs args)
         {
+            await DisplayAlert("Test", "OK", "OK");
             await Navigation.PushAsync(new SettingsNamePage());
         }
 
@@ -46,28 +51,22 @@ namespace Northampton
                 for(int currentResult = 0; currentResult < resultsArray.Count; currentResult++)
                 {
                     tempStreets.Add(resultsArray[currentResult][1].ToString());
+                    storedStreets.Add(new Street(resultsArray[currentResult][0].ToString(), resultsArray[currentResult][1].ToString()));
                 }
                 return tempStreets;
             }
         }
     }
 
-    public class jsonResults
-    {
-        public IList<string> Parameters { get; set; }
-        public string DateSubmitted { get; set; }
-        public IList<Streets> Results { get; set; }
-    }
-
-    public class Parameters
-    {
-        public string Latitude { get; set; }
-        public string Longtitude { get; set; }
-    }
-
-    public class Streets
+    public class Street
     {
         public string USRN { get; set; }
         public string StreetName { get; set; }
+        public Street(String usrn,String streetName)
+        {
+            USRN = usrn;
+            StreetName = streetName;
+        }
+
     }
 }
