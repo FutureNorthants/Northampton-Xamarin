@@ -16,7 +16,6 @@ namespace Northampton
             {
                 settingsName = Application.Current.Properties["SettingsName"] as String;
             }
-
         }
 
         public String SettingsName

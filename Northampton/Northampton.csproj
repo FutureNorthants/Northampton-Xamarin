@@ -18,11 +18,15 @@
   <ItemGroup>
     <EmbeddedResource Remove="MainTab.xaml" />
     <EmbeddedResource Remove="SettingsNamePage %28copy%29.xaml" />
+    <EmbeddedResource Remove="ReportCurrentLocationPage.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="MainTab.xaml.cs" />
     <Compile Remove="SettingsNamePage %28copy%29.xaml.cs" />
     <Compile Remove="ViewModels\WebServiceHandlerPageViewModel.cs" />
+    <Compile Remove="ViewModels\ReportCurrentLocationViewModel.cs" />
+    <Compile Remove="ReportCurrentLocationPage.xaml.cs" />
+    <Compile Remove="ViewModels\ReportDetailsProblemViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ViewModels\" />
