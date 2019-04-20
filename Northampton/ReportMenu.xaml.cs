@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-
 using Xamarin.Forms;
 
 namespace Northampton
@@ -15,7 +14,6 @@ namespace Northampton
 
         async void AtThisLocationButtonClicked(object sender, EventArgs args)
         {
-            //await Navigation.PushAsync(new ReportCurrentLocationPage());
             Application.Current.Properties["WebServiceHandlerPageTitle"] = "Report a problem";
             Application.Current.Properties["WebServiceHandlerPageDescription"] = "Report a problem description";
             await Application.Current.SavePropertiesAsync();

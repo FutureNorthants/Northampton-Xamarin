@@ -24,13 +24,14 @@ namespace Northampton
                 pageDescription = Application.Current.Properties["WebServiceHandlerPageDescription"] as String;
             }
             BindingContext = this;
+
             switch (callingPage)
             {
                 case "ReportMenu":
                     GetCurrentLocation();
                     break;
                 default:
-                    Navigation.PopAsync();
+                    Console.WriteLine("Error4 - callingPage not found");
                     break;
             }
         }
@@ -106,13 +107,13 @@ namespace Northampton
                     else
                     {
                         Console.Out.WriteLine("Response Body: \r\n {0}", content);
-                        Application.Current.Properties["JsonStreet"] = content;
+                        Application.Current.Properties["JsonStreets"] = content;
                         await Application.Current.SavePropertiesAsync();
                     }
                 }
             }
-
             await Navigation.PushAsync(new ReportDetailsPage());
+            Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
         }
     }
 }

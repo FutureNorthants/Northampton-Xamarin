@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.ComponentModel;
 using Xamarin.Forms;
 
 namespace Northampton
@@ -10,13 +10,13 @@ namespace Northampton
         public ReportDetailsPage()
         {
             InitializeComponent();
-            //monkeyNameLabel.SetBinding(Label.TextProperty, new Binding("SelectedItem", source: picker));
+            BindingContext = this;
         }
 
         void OnPickerSelectedIndexChanged(object sender, EventArgs e)
         {
             //var picker = (Picker)sender;
-            int selectedIndex = picker.SelectedIndex;
+            int selectedIndex = typePicker.SelectedIndex;
 
             if (selectedIndex != -1)
             {
@@ -29,5 +29,29 @@ namespace Northampton
             await Navigation.PushAsync(new SettingsNamePage());
         }
 
+        public IList<String> streets
+        {
+            //get
+            //{
+            //    IList<String> tempStreets = new List<string>();
+            //    tempStreets.Add("D");
+            //    tempStreets.Add("E");
+            //    tempStreets.Add("F");
+            //    return tempStreets;
+            //}
+            get
+            {
+                String streetsJson = null;
+                if (Application.Current.Properties.ContainsKey("WebServiceHandlerPageDescription"))
+                {
+                    streetsJson = Application.Current.Properties["JsonStreets"] as String;
+                }
+                IList<String> tempStreets = new List<string>();
+                tempStreets.Add("D");
+                tempStreets.Add("E");
+                tempStreets.Add("F");
+                return tempStreets;
+            }
+        }
     }
 }

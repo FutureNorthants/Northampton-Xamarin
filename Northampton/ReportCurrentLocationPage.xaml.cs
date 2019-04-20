@@ -8,7 +8,7 @@ using Northampton;
 
 namespace Northampton
 {
-    public partial class ReportCurrentLocationPage : ContentPage
+    public partial class ReportCurrentLocationPage : ContentPage 
     {
         public ReportCurrentLocationPage()
         {
