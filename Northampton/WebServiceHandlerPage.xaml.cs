@@ -27,8 +27,11 @@ namespace Northampton
 
             switch (callingPage)
             {
-                case "ReportMenu":
-                    GetCurrentLocation();
+                case "ReportMenuByLocation":
+                    GetLocationByGPS();
+                    break;
+                case "ReportMenuByStreet":
+                    GetLocationByStreet();
                     break;
                 default:
                     Console.WriteLine("Error4 - callingPage not found");
@@ -52,9 +55,8 @@ namespace Northampton
             }
         }
 
-        async void GetCurrentLocation()
+        async void GetLocationByGPS()
         {
-            Console.WriteLine("Checking for location...");
             Location currentLocation = null;
             try
             {
@@ -86,8 +88,6 @@ namespace Northampton
             {
                 Console.WriteLine("Error4 - " + error);
             }
-            Console.WriteLine("returning");
-
 
             WebRequest streetRequest = WebRequest.Create(string.Format(@"https://veolia-test.northampton.digital/api/GetStreetByLatLng?lat={0}&lng={1}", currentLocation.Latitude, currentLocation.Longitude));
             streetRequest.ContentType = "application/json";
@@ -114,6 +114,35 @@ namespace Northampton
             }
             await Navigation.PushAsync(new ReportDetailsPage());
             Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
+        }
+
+        async void GetLocationByStreet()
+        {
+            //WebRequest streetRequest = WebRequest.Create(string.Format(@"https://veolia-test.northampton.digital/api/GetStreetByName={0}&lng={1}", currentLocation.Latitude, currentLocation.Longitude));
+            //streetRequest.ContentType = "application/json";
+            //streetRequest.Method = "GET";
+
+            //using (HttpWebResponse response = streetRequest.GetResponse() as HttpWebResponse)
+            //{
+            //    if (response.StatusCode != HttpStatusCode.OK)
+            //        Console.Out.WriteLine("Error fetching data. Server returned status code: {0}", response.StatusCode);
+            //    using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+            //    {
+            //        var content = reader.ReadToEnd();
+            //        if (string.IsNullOrWhiteSpace(content))
+            //        {
+            //            Console.Out.WriteLine("Response contained empty body...");
+            //        }
+            //        else
+            //        {
+            //            Console.Out.WriteLine("Response Body: \r\n {0}", content);
+            //            Application.Current.Properties["JsonStreets"] = content;
+            //            await Application.Current.SavePropertiesAsync();
+            //        }
+            //    }
+            //}
+            //await Navigation.PushAsync(new ReportDetailsPage());
+            //Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
         }
     }
 }

@@ -5,7 +5,7 @@
             <FlexLayout Direction="Column" JustifyContent="SpaceEvenly" AlignItems="Center">
                 <Button Text="At this location" Style="{StaticResource buttonStyle}" Clicked="AtThisLocationButtonClicked" />
                 <Button Text="Using an existing Photo" Style="{StaticResource buttonStyle}" />
-                <Button Text="Using a Street Name" Style="{StaticResource buttonStyle}" />
+                <Button Text="Using a Street Name" Style="{StaticResource buttonStyle}" Clicked="ByStreetNameButtonClicked" />
             </FlexLayout>
         </ScrollView>
     </ContentPage.Content>

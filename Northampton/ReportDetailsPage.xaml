@@ -3,34 +3,18 @@
     <ContentPage.Content>
         <ScrollView>
             <StackLayout Margin="30" Spacing="30">
-                <Picker x:Name="streetPicker" Title="Confirm the nearest street here" TitleColor="Gray" ItemsSource="{Binding streets}">
-                </Picker>
-                <Picker x:Name="typePicker" Title="Select problem here" TitleColor="Gray" SelectedIndex="{Binding TypePickerIndex}">
+                <Picker x:Name="streetPicker" Title="Confirm the nearest street here" TitleColor="Gray" ItemsSource="{Binding streets}" SelectedIndex="{Binding StreetPickerIndex}" />
+                <Picker x:Name="typePicker" Title="Confirm the problem here" TitleColor="Gray" ItemsSource="{Binding problems}" SelectedIndex="{Binding TypePickerIndex}" />
+                <Editor Placeholder="Enter any more details here" PlaceholderColor="Gray" AutoSize="TextChanges" HeightRequest="260" Completed="EditorCompleted"/>
+                <Picker x:Name="updatesPicker" Title="Would you like updates?" TitleColor="Gray" SelectedIndex="{Binding UpdatesPickerIndex}">
                     <Picker.ItemsSource>
                         <x:Array Type="{x:Type x:String}">
-                            <x:String>Litter</x:String>
-                            <x:String>Flytipping</x:String>
-                            <x:String>Bodily Fluids</x:String>
-                            <x:String>Broken Glass</x:String>
-                            <x:String>Dead Animal</x:String>
-                            <x:String>Dog Fouling</x:String>
-                            <x:String>Drug Paraphernalia</x:String>
-                            <x:String>Flyposting - Non Offensive</x:String>
-                            <x:String>Flyposting - Offensive</x:String>
-                            <x:String>Graffiti - Non Offensive</x:String>
-                            <x:String>Graffiti - Offensive</x:String>
-                            <x:String>Gum Removal</x:String>
-                            <x:String>Leaf Clearance</x:String>
-                            <x:String>Litter Bin Overflowing</x:String>
-                            <x:String>Street Sign Cleaning</x:String>
-                            <x:String>Street Washing</x:String>
-                            <x:String>Sweeper Bags Not Collected</x:String>
-                            <x:String>Sweeping Required</x:String>
-                            <x:String>Weed Clearance</x:String>
+                            <x:String>Updates via Email</x:String>
+                            <x:String>Updates via Text</x:String>
+                            <x:String>No Updates</x:String>
                         </x:Array>
                     </Picker.ItemsSource>
                 </Picker>
-                <Editor Placeholder="Enter description here" PlaceholderColor="Gray" AutoSize="TextChanges" HeightRequest="260" />
                 <Button Text="Submit" Style="{StaticResource buttonStyle}" Clicked="SubmitButtonClicked" />
             </StackLayout>
         </ScrollView>
