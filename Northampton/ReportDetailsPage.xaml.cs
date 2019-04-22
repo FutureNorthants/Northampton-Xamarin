@@ -127,6 +127,10 @@ namespace Northampton
                     tempStreets.Add(resultsArray[currentResult][1].ToString());
                     storedStreets.Add(new Street(resultsArray[currentResult][0].ToString(), resultsArray[currentResult][1].ToString()));
                 }
+                if (resultsArray.Count == 1)
+                {
+                    streetPickerIndex = 1;
+                }
                 return tempStreets;
             }
         }

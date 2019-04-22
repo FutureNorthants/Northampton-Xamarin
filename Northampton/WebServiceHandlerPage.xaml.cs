@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using Newtonsoft.Json.Linq;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -61,6 +62,7 @@ namespace Northampton
         async void GetLocationByGPS()
         {
             Location currentLocation = null;
+            Boolean noStreetsFound = false;
             try
             {
                 var locationRequest = new GeolocationRequest(GeolocationAccuracy.Best);
@@ -112,15 +114,30 @@ namespace Northampton
                         Console.Out.WriteLine("Response Body: \r\n {0}", content);
                         Application.Current.Properties["JsonStreets"] = content;
                         await Application.Current.SavePropertiesAsync();
+                        JObject streetsJSONobject = JObject.Parse(content);
+                        JArray resultsArray = (JArray)streetsJSONobject["results"];
+                        if (resultsArray.Count == 0)
+                        {
+                            noStreetsFound = true;
+                        }
                     }
                 }
             }
-            await Navigation.PushAsync(new ReportDetailsPage());
-            Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
+            if (noStreetsFound)
+            {
+                await DisplayAlert("Missing Information", "No streets found at this location, please try again", "OK");
+                await Navigation.PopAsync();
+            }
+            else
+            {
+                await Navigation.PushAsync(new ReportDetailsPage());
+                Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
+            }
         }
 
         async void GetLocationByStreet(String streetName)
         {
+            Boolean noStreetsFound = false;
             WebRequest streetRequest = WebRequest.Create(string.Format(@"https://veolia-test.northampton.digital/api/GetStreetByName?StreetName={0}", streetName));
             streetRequest.ContentType = "application/json";
             streetRequest.Method = "GET";
@@ -141,11 +158,26 @@ namespace Northampton
                         Console.Out.WriteLine("Response Body: \r\n {0}", content);
                         Application.Current.Properties["JsonStreets"] = content;
                         await Application.Current.SavePropertiesAsync();
+                        JObject streetsJSONobject = JObject.Parse(content);
+                        JArray resultsArray = (JArray)streetsJSONobject["results"];
+                        if (resultsArray.Count == 0)
+                        {
+                            noStreetsFound = true;
+                        }
                     }
                 }
             }
-            await Navigation.PushAsync(new ReportDetailsPage());
-            Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
+            if (noStreetsFound)
+            {
+                await DisplayAlert("Missing Information", "No streets found with the name '" + streetName + "', please try again", "OK");
+                await Navigation.PopAsync();
+            }
+            else
+            {
+                await Navigation.PushAsync(new ReportDetailsPage());
+                Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
+            }
+
         }
     }
 }
