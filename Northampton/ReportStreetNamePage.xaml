@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Northampton.ReportStreetNamePage" Title="Report a problem" Style="{StaticResource pageStyle}">
+    <ContentPage.Content>
+        <FlexLayout Direction="Column" JustifyContent="SpaceEvenly" AlignItems="Center">
+            <Entry Placeholder="Type the street name here" Text="{Binding StreetName, Mode=TwoWay}" PlaceholderColor="Gray" Keyboard="Text" IsSpellCheckEnabled="false" IsTextPredictionEnabled="false" Completed="EntryCompleted" />
+        </FlexLayout>
+    </ContentPage.Content>
+</ContentPage>
