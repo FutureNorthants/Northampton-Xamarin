@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xamarin.Forms;
 
@@ -85,6 +83,7 @@ namespace Northampton
             set
             {
                 updatesPickerIndex = value;
+                //need to move this to being a setting, then remove, just use as default, don't change the preference as it's on a per call basis
                 Application.Current.Properties["SettingsPreferredUpdateChannel"] = updatesPickerIndex.ToString();
                 Application.Current.SavePropertiesAsync();
             }
@@ -106,7 +105,56 @@ namespace Northampton
             }
             else
             {
-                await Navigation.PushAsync(new SettingsNamePage());
+                switch (updatesPickerIndex)
+                {
+                    case 0:
+                        //Email
+                        if (Application.Current.Properties.ContainsKey("SettingsEmail"))
+                        {
+                            if (Application.Current.Properties.ContainsKey("SettingsName"))
+                            {
+                                await Navigation.PushAsync(new WebServiceHandlerPage("SendProblemToCRM"));
+                            }
+                            else
+                            {
+                                await Navigation.PushAsync(new SettingsNamePage(false));
+                            }
+                        }
+                        else
+                        {
+                            await Navigation.PushAsync(new SettingsEmailPage(false));
+                        }
+                        break;
+                    case 1:
+                        //Text
+                        if (Application.Current.Properties.ContainsKey("SettingsPhoneNumber"))
+                        {
+                            if (Application.Current.Properties.ContainsKey("SettingsName"))
+                            {
+                               await Navigation.PushAsync(new WebServiceHandlerPage("SendProblemToCRM"));
+                            }
+                            else
+                            {
+                                await Navigation.PushAsync(new SettingsNamePage(false));
+                            }
+                        }
+                        else
+                        {
+                            await Navigation.PushAsync(new SettingsPhoneNumberPage(false));
+                        }
+                        break;
+                    default:
+                        //None
+                        if (Application.Current.Properties.ContainsKey("SettingsName"))
+                        {
+                            await Navigation.PushAsync(new WebServiceHandlerPage("SendProblemToCRM"));
+                        }
+                        else
+                        {
+                            await Navigation.PushAsync(new SettingsNamePage(false));
+                        }
+                        break;
+                }
             }
         }
 

@@ -10,19 +10,24 @@ namespace Northampton
             InitializeComponent();
         }
 
-        async void NameButtonClicked(object sender, EventArgs args)
+        async void OnNameButtonClicked(object sender, EventArgs args)
         {
-            await Navigation.PushAsync(new SettingsNamePage());
+            await Navigation.PushAsync(new SettingsNamePage(true));
         }
 
-        async void PostcodeButtonClicked(object sender, EventArgs args)
+        async void OnPostcodeButtonClicked(object sender, EventArgs args)
         {
             await Navigation.PushAsync(new SettingsPostcodePage());
         }
 
-        async void OnButtonClicked(object sender, EventArgs args)
+        async void OnEmailButtonClicked(object sender, EventArgs args)
         {
-            await label.RelRotateTo(360, 1000);
+            await Navigation.PushAsync(new SettingsEmailPage(true));
+        }
+
+        async void OnPhoneNumberButtonClicked(object sender, EventArgs args)
+        {
+            await Navigation.PushAsync(new SettingsPhoneNumberPage(true));
         }
     }
 }

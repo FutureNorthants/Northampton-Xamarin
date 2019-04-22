@@ -5,14 +5,24 @@ namespace Northampton
 {
     public partial class SettingsNamePage : ContentPage
     {
-        public SettingsNamePage()
+        Boolean callingFromMenu = false;
+
+        public SettingsNamePage(Boolean callingFromMenu)
         {
-            InitializeComponent();
+            this.callingFromMenu = callingFromMenu;
+            InitializeComponent(); 
         }
 
         void Entry_Completed(object sender, EventArgs e)
         {
-            Navigation.PopAsync();
+            if (callingFromMenu)
+            {
+                Navigation.PopAsync();
+            }
+            else
+            {
+                Navigation.PushAsync(new WebServiceHandlerPage("SendProblemToCRM"));
+            }
         }
     }
 }

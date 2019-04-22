@@ -2,15 +2,10 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Northampton.SettingsMenu" Title="Settings Menu" Style="{StaticResource pageStyle}">
     <ContentPage.Content>
         <FlexLayout Direction="Column" JustifyContent="SpaceEvenly" AlignItems="Center">
-             <Label x:Name="label"
-               Text="Click the Button below"
-               FontSize="Large"
-               VerticalOptions="CenterAndExpand"
-               HorizontalOptions="Center" />
-            <Button Text="My Name" Style="{StaticResource buttonStyle}" Clicked="NameButtonClicked"/>
-            <Button Text="My Postcode" Style="{StaticResource buttonStyle}" Clicked="PostcodeButtonClicked"/>
-            <Button Text="My Phone Number" Style="{StaticResource buttonStyle}" Clicked="OnButtonClicked"/>
-            <Button Text="My Email Address" Style="{StaticResource buttonStyle}" Clicked="OnButtonClicked"/>
+            <Button Text="My Name" Style="{StaticResource buttonStyle}" Clicked="OnNameButtonClicked" />
+            <Button Text="My Postcode" Style="{StaticResource buttonStyle}" Clicked="OnPostcodeButtonClicked" />
+            <Button Text="My Phone Number" Style="{StaticResource buttonStyle}" Clicked="OnPhoneNumberButtonClicked" />
+            <Button Text="My Email Address" Style="{StaticResource buttonStyle}" Clicked="OnEmailButtonClicked" />
         </FlexLayout>
     </ContentPage.Content>
 </ContentPage>

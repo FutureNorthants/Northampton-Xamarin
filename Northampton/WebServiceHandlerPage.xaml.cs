@@ -24,6 +24,9 @@ namespace Northampton
             {
                 pageDescription = Application.Current.Properties["WebServiceHandlerPageDescription"] as String;
             }
+            if (callingPage.Equals("SendProblemToCRM")){
+                pageDescription = "Please wait whilst we submit your problem";
+            }
             BindingContext = this;
 
             switch (callingPage)
@@ -36,6 +39,9 @@ namespace Northampton
                     {
                         GetLocationByStreet(Application.Current.Properties["ProblemStreetSearch"] as String);
                     }
+                    break;
+                case "SendProblemToCRM":
+                    SendProblemToCRM();
                     break;
                 default:
                     Console.WriteLine("Error4 - callingPage not found");
@@ -178,6 +184,11 @@ namespace Northampton
                 Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
             }
 
+        }
+
+        async void SendProblemToCRM()
+        {
+            await DisplayAlert("Sending", "Debug", "OK");
         }
     }
 }
