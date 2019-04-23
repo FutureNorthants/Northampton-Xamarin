@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Northampton.SettingsContactPreferencesPage" Title="My Contact Preferences" Style="{StaticResource pageStyle}">
+    <ContentPage.Content>
+        <Picker x:Name="UpdatesPicker" Title="Would you like updates?" TitleColor="Gray" SelectedIndex="{Binding UpdatesPickerIndex}">
+            <Picker.ItemsSource>
+                <x:Array Type="{x:Type x:String}">
+                    <x:String>Updates via Email</x:String>
+                    <x:String>Updates via Text</x:String>
+                    <x:String>No Updates</x:String>
+                </x:Array>
+            </Picker.ItemsSource>
+        </Picker>
+    </ContentPage.Content>
+</ContentPage>

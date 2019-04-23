@@ -6,6 +6,7 @@
             <Button Text="My Postcode" Style="{StaticResource buttonStyle}" Clicked="OnPostcodeButtonClicked" />
             <Button Text="My Phone Number" Style="{StaticResource buttonStyle}" Clicked="OnPhoneNumberButtonClicked" />
             <Button Text="My Email Address" Style="{StaticResource buttonStyle}" Clicked="OnEmailButtonClicked" />
+            <Button Text="My Contact Preferences" Style="{StaticResource buttonStyle}" Clicked="OnContactPreferencesButtonClicked" />
         </FlexLayout>
     </ContentPage.Content>
 </ContentPage>

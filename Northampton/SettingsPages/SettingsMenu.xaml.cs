@@ -29,5 +29,10 @@ namespace Northampton
         {
             await Navigation.PushAsync(new SettingsPhoneNumberPage(true));
         }
+
+        async void OnContactPreferencesButtonClicked(object sender, EventArgs args)
+        {
+            await Navigation.PushAsync(new SettingsContactPreferencesPage());
+        }
     }
 }

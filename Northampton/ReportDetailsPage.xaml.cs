@@ -83,9 +83,6 @@ namespace Northampton
             set
             {
                 updatesPickerIndex = value;
-                //need to move this to being a setting, then remove, just use as default, don't change the preference as it's on a per call basis
-                Application.Current.Properties["SettingsPreferredUpdateChannel"] = updatesPickerIndex.ToString();
-                Application.Current.SavePropertiesAsync();
             }
         }
 
