@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Net.Http;
+using System.Text;
 using Newtonsoft.Json.Linq;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -24,7 +26,8 @@ namespace Northampton
             {
                 pageDescription = Application.Current.Properties["WebServiceHandlerPageDescription"] as String;
             }
-            if (callingPage.Equals("SendProblemToCRM")){
+            if (callingPage.Equals("SendProblemToCRM"))
+            {
                 pageDescription = "Please wait whilst we submit your problem";
             }
             BindingContext = this;
@@ -189,6 +192,16 @@ namespace Northampton
         async void SendProblemToCRM()
         {
             await DisplayAlert("Sending", "Debug", "OK");
+            var client = new HttpClient();
+            client.BaseAddress = new Uri("localhost:8080");
+
+            string jsonData = @"{""username"" : ""myusername"", ""password"" : ""mypassword""}";
+
+          var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await client.PostAsync("/foo/login", content);
+
+            // this result string should be something like: "{"token":"rgh2ghgdsfds"}"
+            var result = await response.Content.ReadAsStringAsync();
         }
     }
 }
