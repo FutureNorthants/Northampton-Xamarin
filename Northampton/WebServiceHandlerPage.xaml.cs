@@ -183,25 +183,52 @@ namespace Northampton
             }
             else
             {
+                //await Application.Current.MainPage.DisplayAlert("Attention", Navigation.NavigationStack.Count.ToString(), "Ok");
                 await Navigation.PushAsync(new ReportDetailsPage());
-                Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
+                if (Navigation.NavigationStack.Count>1)
+                {
+                    Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
+                }
             }
 
         }
 
         async void SendProblemToCRM()
         {
-            await DisplayAlert("Sending", "Debug", "OK");
+        
             var client = new HttpClient();
-            client.BaseAddress = new Uri("localhost:8080");
+            //client.DefaultRequestHeaders.Add("Content-Type", "image/png");
+            client.DefaultRequestHeaders.Add("dataSource", "xamarin");
+            client.DefaultRequestHeaders.Add("DeviceID", DeviceInfo.Platform.ToString());
+            client.DefaultRequestHeaders.Add("ProblemNumber", "dog_fouling");
+            client.DefaultRequestHeaders.Add("ProblemLatitude", "52.246723629811754");
+            client.DefaultRequestHeaders.Add("ProblemLongitude", "-0.8769807115035064");
+            client.DefaultRequestHeaders.Add("ProblemDescription", "Description");
+            client.DefaultRequestHeaders.Add("ProblemLocation", "Location");
+            client.DefaultRequestHeaders.Add("ProblemEmail", "kevin.white@clubpit.com");
+            client.DefaultRequestHeaders.Add("ProblemPhone", "");
+            client.DefaultRequestHeaders.Add("includesImage", "false");
 
-            string jsonData = @"{""username"" : ""myusername"", ""password"" : ""mypassword""}";
+            client.BaseAddress = new Uri("https://mycouncil-test.northampton.digital");
 
-          var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await client.PostAsync("/foo/login", content);
+            String jsonData = "";
+
+            var content = new StringContent(jsonData, Encoding.UTF8, "image/png");
+            HttpResponseMessage response = await client.PostAsync("/CreateCall?", content);
 
             // this result string should be something like: "{"token":"rgh2ghgdsfds"}"
-            var result = await response.Content.ReadAsStringAsync();
+            String jsonResult = await response.Content.ReadAsStringAsync();
+            JObject crmJSONobject = JObject.Parse(jsonResult);
+            if (((string)crmJSONobject.SelectToken("result")).Equals("success"))
+            {
+                await Navigation.PushAsync(new ReportResultPage((string)crmJSONobject.SelectToken("callNumber"),(string)crmJSONobject.SelectToken("slaDate")));
+                Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
+            }
+            else
+            {
+                await DisplayAlert("Error", "No response from server, please try again later", "OK");
+                await Navigation.PopAsync();
+            }
         }
     }
 }

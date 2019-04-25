@@ -1,6 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Northampton.ReportResultPage" Title="Report a Problem" Style="{StaticResource pageStyle}">
     <ContentPage.Content>
-         <Label Text="{Binding PageDescription}" AbsoluteLayout.LayoutBounds=".5,0.25,.75,.1" AbsoluteLayout.LayoutFlags="All" LineBreakMode="WordWrap" />
+        <AbsoluteLayout>
+            <Label AbsoluteLayout.LayoutBounds="0.5, 0.35, -1, -1" LineBreakMode="WordWrap" AbsoluteLayout.LayoutFlags="PositionProportional">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="Your call number is" TextColor="Black" Font="Bold, 20" />
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+            <Label AbsoluteLayout.LayoutBounds=".5,.45,-1,-1" LineBreakMode="WordWrap" AbsoluteLayout.LayoutFlags="PositionProportional">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="{Binding ReferenceNumber}" TextColor="Red" Font="Bold, 30" />
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+            <Label AbsoluteLayout.LayoutBounds="0.5, 0.55, -1, -1" LineBreakMode="WordWrap" AbsoluteLayout.LayoutFlags="PositionProportional">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="And will be resolved by" TextColor="Black" Font="Bold, 20" />
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+                       <Label AbsoluteLayout.LayoutBounds=".5,.65,-1,-1" LineBreakMode="WordWrap" AbsoluteLayout.LayoutFlags="PositionProportional">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="{Binding SLAText}" TextColor="Red" Font="Bold, 30" />
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+        </AbsoluteLayout>
     </ContentPage.Content>
 </ContentPage>
