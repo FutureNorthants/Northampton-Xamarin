@@ -248,10 +248,11 @@ namespace Northampton
             client.DefaultRequestHeaders.Add("ProblemNumber", problemType);
             client.DefaultRequestHeaders.Add("ProblemLatitude", problemLat);
             client.DefaultRequestHeaders.Add("ProblemLongitude", problemLng);
-            client.DefaultRequestHeaders.Add("ProblemDescription", "Description");
+            client.DefaultRequestHeaders.Add("ProblemDescription", Application.Current.Properties["ProblemDescription"] as String);
             client.DefaultRequestHeaders.Add("ProblemLocation", Application.Current.Properties["ProblemLocation"] as String);
             client.DefaultRequestHeaders.Add("ProblemEmail", problemEmail);
             client.DefaultRequestHeaders.Add("ProblemPhone", problemText);
+            client.DefaultRequestHeaders.Add("UsedLatLng", Application.Current.Properties["UsedLatLng"] as String);
             client.DefaultRequestHeaders.Add("includesImage", "false");
 
             client.BaseAddress = new Uri("https://mycouncil-test.northampton.digital");

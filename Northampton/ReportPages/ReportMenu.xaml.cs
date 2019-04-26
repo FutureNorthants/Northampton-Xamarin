@@ -9,10 +9,12 @@ namespace Northampton
         public ReportMenu()
         {
             InitializeComponent();
+            Application.Current.Properties["ProblemDescription"] = "";
         }
 
         async void AtThisLocationButtonClicked(object sender, EventArgs args)
         {
+            Application.Current.Properties["UsedLatLng"] = "true";
             Application.Current.Properties["WebServiceHandlerPageTitle"] = "Report a problem";
             Application.Current.Properties["WebServiceHandlerPageDescription"] = "Please wait whilst we find nearby streets";
             await Application.Current.SavePropertiesAsync();
@@ -23,6 +25,7 @@ namespace Northampton
         {
             Application.Current.Properties["ProblemLat"] = "";
             Application.Current.Properties["ProblemLng"] = "";
+            Application.Current.Properties["UsedLatLng"] = "false";
             Application.Current.Properties["WebServiceHandlerPageTitle"] = "Report a problem";
             Application.Current.Properties["WebServiceHandlerPageDescription"] = "Please wait whilst we find that street";
             await Application.Current.SavePropertiesAsync();

@@ -16,7 +16,6 @@ namespace Northampton
         public MainPage()
         {
             InitializeComponent();
-            //this.SetValue(BarBackgroundColorProperty, "#d4b474");
             this.SetValue(BarBackgroundColorProperty, "Color.Black");
             On<Android>().SetToolbarPlacement(ToolbarPlacement.Bottom)
              .SetBarItemColor(Color.Gray)

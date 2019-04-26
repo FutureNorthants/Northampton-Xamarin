@@ -3,6 +3,7 @@
     <ContentPage.Content>
         <ScrollView>
             <StackLayout Margin="30" Spacing="30">
+                <Button Text="Test" IsVisible="false"/>
                 <Picker x:Name="streetPicker" Title="Confirm the nearest street here" TitleColor="Gray" ItemsSource="{Binding streets}" SelectedIndex="{Binding StreetPickerIndex}" />
                 <Picker x:Name="typePicker" Title="Confirm the problem here" TitleColor="Gray" ItemsSource="{Binding problems}" SelectedIndex="{Binding TypePickerIndex}" />
                 <Editor Placeholder="Enter any more details here" PlaceholderColor="Gray" AutoSize="TextChanges" HeightRequest="260" Completed="EditorCompleted"/>

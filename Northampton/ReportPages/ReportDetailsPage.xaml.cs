@@ -66,6 +66,7 @@ namespace Northampton
         void EditorCompleted(object sender, EventArgs e)
         {
             problemDescription = ((Editor)sender).Text;
+            Application.Current.Properties["ProblemDescription"] = ((Editor)sender).Text;
         }
 
         public int UpdatesPickerIndex
