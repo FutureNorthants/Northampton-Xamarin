@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -12,9 +13,9 @@ namespace Northampton
     public partial class WebServiceHandlerPage : ContentPage
     {
 
-        private string pageTitle = "";
-        private string pageDescription = "";
-
+        private String pageTitle = "";
+        private String pageDescription = "";
+ 
         public WebServiceHandlerPage(String callingPage)
         {
             InitializeComponent();
@@ -80,8 +81,8 @@ namespace Northampton
                 if (currentLocation != null)
                 {
                     Console.WriteLine($"Latitude: {currentLocation.Latitude}, Longitude: {currentLocation.Longitude}, Altitude: {currentLocation.Altitude}");
-                    Application.Current.Properties["Latitude"] = currentLocation.Latitude;
-                    Application.Current.Properties["Longtitude"] = currentLocation.Longitude;
+                    Application.Current.Properties["ProblemLat"] = currentLocation.Latitude.ToString();
+                    Application.Current.Properties["ProblemLng"] = currentLocation.Longitude.ToString();
                     await Application.Current.SavePropertiesAsync();
                 }
 
@@ -183,7 +184,6 @@ namespace Northampton
             }
             else
             {
-                //await Application.Current.MainPage.DisplayAlert("Attention", Navigation.NavigationStack.Count.ToString(), "Ok");
                 await Navigation.PushAsync(new ReportDetailsPage());
                 if (Navigation.NavigationStack.Count>1)
                 {
@@ -195,18 +195,63 @@ namespace Northampton
 
         async void SendProblemToCRM()
         {
-        
+            String problemType = "";
+            String problemLat = "";
+            String problemLng = "";
+            String problemEmail = "";
+            String problemText = "";
+
+            if (Application.Current.Properties.ContainsKey("ProblemType"))
+            {
+                problemType = Application.Current.Properties["ProblemType"] as String;
+            }
+            if (Application.Current.Properties.ContainsKey("ProblemLat"))
+            {
+                problemLat = Application.Current.Properties["ProblemLat"] as String;
+            }
+            if (Application.Current.Properties.ContainsKey("ProblemLng"))
+            {
+                problemLng = Application.Current.Properties["ProblemLng"] as String;
+            }
+            if (Application.Current.Properties.ContainsKey("ProblemUpdates"))
+            {
+                String problemUpdates = Application.Current.Properties["ProblemUpdates"] as String;
+                switch (problemUpdates)
+                {
+                    case "email":
+                        //Email
+                        if (Application.Current.Properties.ContainsKey("SettingsEmail"))
+                        {
+                            problemEmail = Application.Current.Properties["SettingsEmail"] as String;
+                        }
+                        break;
+                    case "text":
+                        //Text
+                        if (Application.Current.Properties.ContainsKey("SettingsPhoneNumber"))
+                        {
+                            problemText = Application.Current.Properties["SettingsPhoneNumber"] as String;
+                        }
+                        break;
+                    case "none":
+                        //No Updates;
+                        break;
+                    default:
+                        Console.WriteLine("Updates setting not found");
+                        break;
+                }
+            }
+
             var client = new HttpClient();
             //client.DefaultRequestHeaders.Add("Content-Type", "image/png");
             client.DefaultRequestHeaders.Add("dataSource", "xamarin");
             client.DefaultRequestHeaders.Add("DeviceID", DeviceInfo.Platform.ToString());
-            client.DefaultRequestHeaders.Add("ProblemNumber", "dog_fouling");
-            client.DefaultRequestHeaders.Add("ProblemLatitude", "52.246723629811754");
-            client.DefaultRequestHeaders.Add("ProblemLongitude", "-0.8769807115035064");
+            client.DefaultRequestHeaders.Add("ProblemNumber", problemType);
+            client.DefaultRequestHeaders.Add("ProblemLatitude", problemLat);
+            client.DefaultRequestHeaders.Add("ProblemLongitude", problemLng);
             client.DefaultRequestHeaders.Add("ProblemDescription", "Description");
-            client.DefaultRequestHeaders.Add("ProblemLocation", "Location");
-            client.DefaultRequestHeaders.Add("ProblemEmail", "kevin.white@clubpit.com");
-            client.DefaultRequestHeaders.Add("ProblemPhone", "");
+            client.DefaultRequestHeaders.Add("ProblemLocation", Application.Current.Properties["ProblemLocation"] as String);
+            client.DefaultRequestHeaders.Add("ProblemEmail", problemEmail);
+            client.DefaultRequestHeaders.Add("ProblemPhone", problemText);
             client.DefaultRequestHeaders.Add("includesImage", "false");
 
             client.BaseAddress = new Uri("https://mycouncil-test.northampton.digital");
@@ -216,7 +261,6 @@ namespace Northampton
             var content = new StringContent(jsonData, Encoding.UTF8, "image/png");
             HttpResponseMessage response = await client.PostAsync("/CreateCall?", content);
 
-            // this result string should be something like: "{"token":"rgh2ghgdsfds"}"
             String jsonResult = await response.Content.ReadAsStringAsync();
             JObject crmJSONobject = JObject.Parse(jsonResult);
             if (((string)crmJSONobject.SelectToken("result")).Equals("success"))

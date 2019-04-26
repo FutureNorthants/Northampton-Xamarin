@@ -88,7 +88,7 @@ namespace Northampton
 
         async void SubmitButtonClicked(object sender, EventArgs args)
         {
-           if(streetPickerIndex == -1)
+            if (streetPickerIndex == -1)
             {
                 await DisplayAlert("Missing Information", "Please confirm the street nearest the problem", "OK");
             }
@@ -102,6 +102,34 @@ namespace Northampton
             }
             else
             {
+                Application.Current.Properties["ProblemType"] = storedProblems[typePickerIndex].ProblemName;
+                switch (updatesPickerIndex)
+                {
+                    case 0:
+                        //Email
+                        Application.Current.Properties["ProblemUpdates"] = "email";
+                        break;
+                    case 1:
+                        //Text
+                        Application.Current.Properties["ProblemUpdates"] = "text";
+                        break;
+                    case 2:
+                        Application.Current.Properties["ProblemUpdates"] = "none";
+                        //No Updates;
+                        break;
+                    default:
+                        Console.WriteLine("Updates setting not found");
+                        break;
+                }
+
+                Application.Current.Properties["ProblemLocation"] = storedStreets[streetPickerIndex].StreetName;
+                if (Application.Current.Properties["ProblemLat"].ToString().Equals(""))
+                {
+                    Application.Current.Properties["ProblemLat"] = storedStreets[streetPickerIndex].Latitude;
+                    Application.Current.Properties["ProblemLng"] = storedStreets[streetPickerIndex].Longtitude;
+                }
+
+                await Application.Current.SavePropertiesAsync();
                 switch (updatesPickerIndex)
                 {
                     case 0:
@@ -128,7 +156,7 @@ namespace Northampton
                         {
                             if (Application.Current.Properties.ContainsKey("SettingsName"))
                             {
-                               await Navigation.PushAsync(new WebServiceHandlerPage("SendProblemToCRM"));
+                                await Navigation.PushAsync(new WebServiceHandlerPage("SendProblemToCRM"));
                             }
                             else
                             {
@@ -160,7 +188,7 @@ namespace Northampton
             get
             {
                 String streetsJson = null;
-                if (Application.Current.Properties.ContainsKey("WebServiceHandlerPageDescription"))
+                if (Application.Current.Properties.ContainsKey("JsonStreets"))
                 {
                     streetsJson = Application.Current.Properties["JsonStreets"] as String;
                 }
@@ -170,7 +198,23 @@ namespace Northampton
                 for (int currentResult = 0; currentResult < resultsArray.Count; currentResult++)
                 {
                     tempStreets.Add(resultsArray[currentResult][1].ToString());
-                    storedStreets.Add(new Street(resultsArray[currentResult][0].ToString(), resultsArray[currentResult][1].ToString()));
+                    if (Application.Current.Properties["ProblemLat"].ToString().Equals(""))
+                    {
+                        storedStreets.Add(new Street(resultsArray[currentResult][0].ToString(),
+                                                     resultsArray[currentResult][1].ToString(),
+                                                     resultsArray[currentResult][2].ToString(),
+                                                     resultsArray[currentResult][3].ToString()
+                                                     ));
+                    }
+                    else
+                    {
+                        storedStreets.Add(new Street(resultsArray[currentResult][0].ToString(),
+                                                     resultsArray[currentResult][1].ToString(),
+                                                     "",
+                                                     ""
+                                                     ));
+                    }
+
                 }
                 if (resultsArray.Count == 1)
                 {
@@ -196,12 +240,16 @@ namespace Northampton
 
     public class Street
     {
-        public string USRN { get; set; }
-        public string StreetName { get; set; }
-        public Street(String usrn, String streetName)
+        public String USRN { get; set; }
+        public String StreetName { get; set; }
+        public String Latitude { get; set; }
+        public String Longtitude { get; set; }
+        public Street(String usrn, String streetName, String latitude, String longtitude)
         {
             USRN = usrn;
             StreetName = streetName;
+            Latitude = latitude;
+            Longtitude = longtitude;
         }
 
     }

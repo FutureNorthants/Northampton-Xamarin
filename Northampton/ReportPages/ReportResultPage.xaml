@@ -19,7 +19,7 @@
             <Label AbsoluteLayout.LayoutBounds="0.5, 0.55, -1, -1" LineBreakMode="WordWrap" AbsoluteLayout.LayoutFlags="PositionProportional">
                 <Label.FormattedText>
                     <FormattedString>
-                        <Span Text="And will be resolved by" TextColor="Black" Font="Bold, 20" />
+                        <Span Text="We will aim to resolve this" TextColor="Black" Font="Bold, 20" />
                     </FormattedString>
                 </Label.FormattedText>
             </Label>
