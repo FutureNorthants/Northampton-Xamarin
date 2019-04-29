@@ -41,11 +41,6 @@ namespace Northampton
             {
                 var position = new Position(double.Parse(problemLat), double.Parse(problemLng));
                 ProblemMap.MoveToRegion(new MapSpan(position, 0.001, 0.001));
-                //ProblemMap.Pins.Add(new Pin
-                //{
-                //    Label = "",
-                //    Position = position
-                //});
             }
             storedProblems.Add(new Problem(0, "litter", "Litter"));
             storedProblems.Add(new Problem(1, "flytip", "Flytipping"));
