@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using Xamarin.Forms;
+using Xamarin.Forms.Maps;
 
 namespace Northampton
 {
@@ -11,12 +12,41 @@ namespace Northampton
         private int typePickerIndex = -1;
         private int updatesPickerIndex = -1;
         private String problemDescription = "";
+        private Boolean isMapVisible = true;
         IList<Street> storedStreets = new List<Street>();
         IList<Problem> storedProblems = new List<Problem>();
+        String problemLat = "";
+        String problemLng = "";
 
-        public ReportDetailsPage()
+        public ReportDetailsPage(Boolean usingGPS)
         {
+            if (usingGPS)
+            {
+                isMapVisible = true;
+                if (Application.Current.Properties.ContainsKey("ProblemLat"))
+                {
+                    problemLat = Application.Current.Properties["ProblemLat"] as String;
+                }
+                if (Application.Current.Properties.ContainsKey("ProblemLng"))
+                {
+                    problemLng = Application.Current.Properties["ProblemLng"] as String;
+                }
+            }
+            else
+            {
+                isMapVisible = false;
+            }
             InitializeComponent();
+            if (usingGPS)
+            {
+                var position = new Position(double.Parse(problemLat), double.Parse(problemLng));
+                ProblemMap.MoveToRegion(new MapSpan(position, 0.001, 0.001));
+                //ProblemMap.Pins.Add(new Pin
+                //{
+                //    Label = "",
+                //    Position = position
+                //});
+            }
             storedProblems.Add(new Problem(0, "litter", "Litter"));
             storedProblems.Add(new Problem(1, "flytip", "Flytipping"));
             storedProblems.Add(new Problem(2, "bodily_fluids", "Bodily Fluids"));
@@ -235,6 +265,14 @@ namespace Northampton
                     tempProblems.Add(storedProblems[currentProblem].ProblemDescription);
                 }
                 return tempProblems;
+            }
+        }
+
+        public Boolean IsMapVisible
+        {
+            get
+            { 
+            return isMapVisible; 
             }
         }
     }

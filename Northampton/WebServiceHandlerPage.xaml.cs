@@ -140,7 +140,7 @@ namespace Northampton
             }
             else
             {
-                await Navigation.PushAsync(new ReportDetailsPage());
+                await Navigation.PushAsync(new ReportDetailsPage(true));
                 Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
             }
         }
@@ -184,7 +184,7 @@ namespace Northampton
             }
             else
             {
-                await Navigation.PushAsync(new ReportDetailsPage());
+                await Navigation.PushAsync(new ReportDetailsPage(false));
                 if (Navigation.NavigationStack.Count>1)
                 {
                     Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);

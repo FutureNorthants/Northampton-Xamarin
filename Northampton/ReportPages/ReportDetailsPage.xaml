@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Northampton.ReportDetailsPage" Title="Report a Problem" Style="{StaticResource pageStyle}">
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Northampton.ReportDetailsPage" xmlns:maps="clr-namespace:Xamarin.Forms.Maps;assembly=Xamarin.Forms.Maps" Title="Report a Problem" Style="{StaticResource pageStyle}">
     <ContentPage.Content>
         <ScrollView>
             <StackLayout Margin="30" Spacing="30">
-                <Button Text="Test" IsVisible="false"/>
+                <maps:Map WidthRequest="320" HeightRequest="200" x:Name="ProblemMap" IsShowingUser="true" MapType="Hybrid" IsVisible="{Binding IsMapVisible}"/>
                 <Picker x:Name="streetPicker" Title="Confirm the nearest street here" TitleColor="Gray" ItemsSource="{Binding streets}" SelectedIndex="{Binding StreetPickerIndex}" />
                 <Picker x:Name="typePicker" Title="Confirm the problem here" TitleColor="Gray" ItemsSource="{Binding problems}" SelectedIndex="{Binding TypePickerIndex}" />
-                <Editor Placeholder="Enter any more details here" PlaceholderColor="Gray" AutoSize="TextChanges" HeightRequest="260" Completed="EditorCompleted"/>
+                <Editor Placeholder="Enter any more details here" PlaceholderColor="Gray" AutoSize="TextChanges" HeightRequest="260" Completed="EditorCompleted" />
                 <Picker x:Name="updatesPicker" Title="Would you like updates?" TitleColor="Gray" SelectedIndex="{Binding UpdatesPickerIndex}">
                     <Picker.ItemsSource>
                         <x:Array Type="{x:Type x:String}">
