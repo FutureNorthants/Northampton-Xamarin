@@ -23,7 +23,7 @@ namespace Northampton
             {
                 if (Application.Current.Properties.ContainsKey("SettingsName"))
                 {
-                    Navigation.PushAsync(new WebServiceHandlerPage("SendProblemToCRM"));
+                    Navigation.PushAsync(new WebServiceHandlerPage("SendProblemToCRM",null));
                 }
                 else
                 {

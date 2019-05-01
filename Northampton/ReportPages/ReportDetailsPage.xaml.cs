@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Newtonsoft.Json.Linq;
+using Plugin.Media.Abstractions;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 
@@ -13,6 +15,8 @@ namespace Northampton
         private int updatesPickerIndex = -1;
         private String problemDescription = "";
         private Boolean isMapVisible = true;
+        private Boolean includesImage = false;
+        private MediaFile imageData = null;
         IList<Street> storedStreets = new List<Street>();
         IList<Problem> storedProblems = new List<Problem>();
         String problemLat = "";
@@ -37,6 +41,8 @@ namespace Northampton
                 isMapVisible = false;
             }
             InitializeComponent();
+            PhotoButton.IsVisible = true;
+            PhotoImage.IsVisible = false;
             if (usingGPS)
             {
                 var position = new Position(double.Parse(problemLat), double.Parse(problemLng));
@@ -73,6 +79,7 @@ namespace Northampton
             set
             {
                 streetPickerIndex = value;
+                ScrollView.ScrollToAsync(typePicker, ScrollToPosition.MakeVisible, true);
             }
         }
 
@@ -85,6 +92,7 @@ namespace Northampton
             set
             {
                 typePickerIndex = value;
+                ScrollView.ScrollToAsync(updatesPicker, ScrollToPosition.MakeVisible, true);
             }
         }
 
@@ -109,6 +117,29 @@ namespace Northampton
             set
             {
                 updatesPickerIndex = value;
+                ScrollView.ScrollToAsync(submitButton, ScrollToPosition.MakeVisible, true);
+            }
+        }
+
+        private async void TakePhotoButtonClicked(object sender, EventArgs e)
+        {
+            MediaFile photo = await Plugin.Media.CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
+            {
+                PhotoSize = PhotoSize.Medium,
+            });
+
+            if (photo != null)
+            {
+                imageData = photo;
+                includesImage = true;
+                PhotoButton.IsVisible = false;
+                PhotoImage.Source = ImageSource.FromStream(() => { return photo.GetStream(); });
+                Stream imageString = photo.GetStream();
+                String tempStr = photo.ToString();
+                PhotoImage.IsVisible = true;
+                Application.Current.Properties["ProblemImage"] = photo.ToString();
+                await Application.Current.SavePropertiesAsync();
+            await ScrollView.ScrollToAsync(submitButton, ScrollToPosition.MakeVisible, true);
             }
         }
 
@@ -154,6 +185,16 @@ namespace Northampton
                     Application.Current.Properties["ProblemLat"] = storedStreets[streetPickerIndex].Latitude;
                     Application.Current.Properties["ProblemLng"] = storedStreets[streetPickerIndex].Longtitude;
                 }
+                String tempIncludesImage = "";
+                if (includesImage)
+                {
+                    tempIncludesImage = "true";
+                }
+                else 
+                {
+                    tempIncludesImage = "false"; 
+                }
+                Application.Current.Properties["ProblemUsedImage"] = tempIncludesImage;
 
                 await Application.Current.SavePropertiesAsync();
                 switch (updatesPickerIndex)
@@ -164,7 +205,7 @@ namespace Northampton
                         {
                             if (Application.Current.Properties.ContainsKey("SettingsName"))
                             {
-                                await Navigation.PushAsync(new WebServiceHandlerPage("SendProblemToCRM"));
+                                await Navigation.PushAsync(new WebServiceHandlerPage("SendProblemToCRM",imageData));
                             }
                             else
                             {
@@ -182,7 +223,7 @@ namespace Northampton
                         {
                             if (Application.Current.Properties.ContainsKey("SettingsName"))
                             {
-                                await Navigation.PushAsync(new WebServiceHandlerPage("SendProblemToCRM"));
+                                await Navigation.PushAsync(new WebServiceHandlerPage("SendProblemToCRM",imageData));
                             }
                             else
                             {
@@ -198,7 +239,7 @@ namespace Northampton
                         //None
                         if (Application.Current.Properties.ContainsKey("SettingsName"))
                         {
-                            await Navigation.PushAsync(new WebServiceHandlerPage("SendProblemToCRM"));
+                            await Navigation.PushAsync(new WebServiceHandlerPage("SendProblemToCRM",imageData));
                         }
                         else
                         {
@@ -266,8 +307,8 @@ namespace Northampton
         public Boolean IsMapVisible
         {
             get
-            { 
-            return isMapVisible; 
+            {
+                return isMapVisible;
             }
         }
     }

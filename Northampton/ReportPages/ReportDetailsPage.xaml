@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Northampton.ReportDetailsPage" xmlns:maps="clr-namespace:Xamarin.Forms.Maps;assembly=Xamarin.Forms.Maps" Title="Report a Problem" Style="{StaticResource pageStyle}">
     <ContentPage.Content>
-        <ScrollView>
+        <ScrollView x:Name="ScrollView">
             <StackLayout Margin="30" Spacing="30">
-                <maps:Map WidthRequest="320" HeightRequest="200" x:Name="ProblemMap" IsShowingUser="true" MapType="Hybrid" IsVisible="{Binding IsMapVisible}"/>
+                <maps:Map WidthRequest="320" HeightRequest="200" x:Name="ProblemMap" IsShowingUser="true" MapType="Street" IsVisible="{Binding IsMapVisible}" />
                 <Picker x:Name="streetPicker" Title="Confirm the nearest street here" TitleColor="Gray" ItemsSource="{Binding streets}" SelectedIndex="{Binding StreetPickerIndex}" />
                 <Picker x:Name="typePicker" Title="Confirm the problem here" TitleColor="Gray" ItemsSource="{Binding problems}" SelectedIndex="{Binding TypePickerIndex}" />
                 <Editor Placeholder="Enter any more details here" PlaceholderColor="Gray" AutoSize="TextChanges" HeightRequest="260" Completed="EditorCompleted" />
@@ -16,7 +16,9 @@
                         </x:Array>
                     </Picker.ItemsSource>
                 </Picker>
-                <Button Text="Submit" Style="{StaticResource buttonStyle}" Clicked="SubmitButtonClicked" />
+                <Button x:Name="PhotoButton" Text="Take a photo" Style="{StaticResource buttonStyle}" Clicked="TakePhotoButtonClicked" IsVisible="{Binding IsPhotoButtonVisible}" />     
+                    <Image x:Name="PhotoImage" Aspect="AspectFill" IsVisible="{Binding IsPhotoImageVisible}"/>
+                <Button x:Name="submitButton" Text="Submit" Style="{StaticResource buttonStyle}" Clicked="SubmitButtonClicked" />
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>

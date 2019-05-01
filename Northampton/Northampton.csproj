@@ -15,6 +15,7 @@
     <PackageReference Include="Xamarin.Essentials" Version="1.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="Xamarin.Forms.Maps" Version="3.6.0.344457" />
+    <PackageReference Include="Xam.Plugin.Media" Version="4.0.1.5" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Remove="MainTab.xaml" />
@@ -28,6 +29,7 @@
     <Compile Remove="ViewModels\ReportCurrentLocationViewModel.cs" />
     <Compile Remove="ReportCurrentLocationPage.xaml.cs" />
     <Compile Remove="ViewModels\ReportDetailsProblemViewModel.cs" />
+    <Compile Remove="ViewModels\ReportDetailsViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ViewModels\" />

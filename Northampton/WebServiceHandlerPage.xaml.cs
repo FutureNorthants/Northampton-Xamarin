@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using Newtonsoft.Json.Linq;
+using Plugin.Media.Abstractions;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -15,8 +16,8 @@ namespace Northampton
 
         private String pageTitle = "";
         private String pageDescription = "";
- 
-        public WebServiceHandlerPage(String callingPage)
+
+        public WebServiceHandlerPage(String callingPage, MediaFile imageData)
         {
             InitializeComponent();
             if (Application.Current.Properties.ContainsKey("WebServiceHandlerPageTitle"))
@@ -45,7 +46,7 @@ namespace Northampton
                     }
                     break;
                 case "SendProblemToCRM":
-                    SendProblemToCRM();
+                    SendProblemToCRM(imageData);
                     break;
                 default:
                     Console.WriteLine("Error4 - callingPage not found");
@@ -71,7 +72,7 @@ namespace Northampton
 
         async void GetLocationByGPS()
         {
-            Location currentLocation = null;
+            Xamarin.Essentials.Location currentLocation = null;
             Boolean noStreetsFound = false;
             try
             {
@@ -185,7 +186,7 @@ namespace Northampton
             else
             {
                 await Navigation.PushAsync(new ReportDetailsPage(false));
-                if (Navigation.NavigationStack.Count>1)
+                if (Navigation.NavigationStack.Count > 1)
                 {
                     Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
                 }
@@ -193,7 +194,7 @@ namespace Northampton
 
         }
 
-        async void SendProblemToCRM()
+        async void SendProblemToCRM(MediaFile imageData)
         {
             String problemType = "";
             String problemLat = "";
@@ -242,6 +243,7 @@ namespace Northampton
             }
 
             var client = new HttpClient();
+            String usedLatLng = Application.Current.Properties["UsedLatLng"] as String;
             //client.DefaultRequestHeaders.Add("Content-Type", "image/png");
             client.DefaultRequestHeaders.Add("dataSource", "xamarin");
             client.DefaultRequestHeaders.Add("DeviceID", DeviceInfo.Platform.ToString());
@@ -253,20 +255,32 @@ namespace Northampton
             client.DefaultRequestHeaders.Add("ProblemEmail", problemEmail);
             client.DefaultRequestHeaders.Add("ProblemPhone", problemText);
             client.DefaultRequestHeaders.Add("UsedLatLng", Application.Current.Properties["UsedLatLng"] as String);
-            client.DefaultRequestHeaders.Add("includesImage", "false");
+            if (Application.Current.Properties["ProblemUsedImage"].ToString().Equals("true"))
+            {
+                client.DefaultRequestHeaders.Add("includesImage", "true");
+
+            }
+            else
+            {
+                client.DefaultRequestHeaders.Add("includesImage", "false");
+            }
+
 
             client.BaseAddress = new Uri("https://mycouncil-test.northampton.digital");
 
             String jsonData = "";
 
-            var content = new StringContent(jsonData, Encoding.UTF8, "image/png");
+            //MediaFile imageData = Application.Current.Properties["ProblemImage"] as MediaFile;
+
+            Stream imageStream = imageData.GetStream();
+            var content = new StringContent(imageStream.ToString(), Encoding.UTF8, "image/png");
             HttpResponseMessage response = await client.PostAsync("/CreateCall?", content);
 
             String jsonResult = await response.Content.ReadAsStringAsync();
             JObject crmJSONobject = JObject.Parse(jsonResult);
             if (((string)crmJSONobject.SelectToken("result")).Equals("success"))
             {
-                await Navigation.PushAsync(new ReportResultPage((string)crmJSONobject.SelectToken("callNumber"),(string)crmJSONobject.SelectToken("slaDate")));
+                await Navigation.PushAsync(new ReportResultPage((string)crmJSONobject.SelectToken("callNumber"), (string)crmJSONobject.SelectToken("slaDate")));
                 Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
             }
             else

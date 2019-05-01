@@ -13,7 +13,7 @@
             <Style x:Key="buttonStyle" TargetType="Button">
                 <Setter Property="HorizontalOptions" Value="Center" />
                 <Setter Property="VerticalOptions" Value="CenterAndExpand" />
-                <Setter Property="BackgroundColor" Value="#ffffff" />
+                <Setter Property="BackgroundColor" Value="#d4b474" />
                 <Setter Property="BorderColor" Value="Gray" />
                 <Setter Property="CornerRadius" Value="10" />
                 <Setter Property="BorderWidth" Value="3" />

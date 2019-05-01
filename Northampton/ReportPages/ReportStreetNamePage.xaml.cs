@@ -23,7 +23,7 @@ namespace Northampton
             {
                 Application.Current.Properties["ProblemStreetSearch"] = streetName;
                 await Application.Current.SavePropertiesAsync();
-                await Navigation.PushAsync(new WebServiceHandlerPage("ReportMenuByStreet"));
+                await Navigation.PushAsync(new WebServiceHandlerPage("ReportMenuByStreet",null));
             }
  
 

@@ -18,7 +18,7 @@ namespace Northampton
             Application.Current.Properties["WebServiceHandlerPageTitle"] = "Report a problem";
             Application.Current.Properties["WebServiceHandlerPageDescription"] = "Please wait whilst we find nearby streets";
             await Application.Current.SavePropertiesAsync();
-            await Navigation.PushAsync(new WebServiceHandlerPage("ReportMenuByLocation"));
+            await Navigation.PushAsync(new WebServiceHandlerPage("ReportMenuByLocation",null));
         }
 
         async void ByStreetNameButtonClicked(object sender, EventArgs args)
@@ -30,6 +30,17 @@ namespace Northampton
             Application.Current.Properties["WebServiceHandlerPageDescription"] = "Please wait whilst we find that street";
             await Application.Current.SavePropertiesAsync();
             await Navigation.PushAsync(new ReportStreetNamePage());
+        }
+
+        async void UsingPhotoButtonClicked(object sender, EventArgs args)
+        {
+            Application.Current.Properties["ProblemLat"] = "";
+            Application.Current.Properties["ProblemLng"] = "";
+            Application.Current.Properties["UsedLatLng"] = "false";
+            Application.Current.Properties["WebServiceHandlerPageTitle"] = "Report a problem";
+            Application.Current.Properties["WebServiceHandlerPageDescription"] = "Please wait whilst we find that street";
+            await Application.Current.SavePropertiesAsync();
+            await Navigation.PushAsync(new ReportTakePhoto());
         }
 
     }
