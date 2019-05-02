@@ -120,15 +120,33 @@
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon20.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Assets.xcassets\reportit.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\reportit.imageset\report.png" />
-    <ImageAsset Include="Assets.xcassets\reportit.imageset\report%402x.png" />
-    <ImageAsset Include="Assets.xcassets\find.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\find.imageset\find.png" />
-    <ImageAsset Include="Assets.xcassets\find.imageset\find%402x.png" />
-    <ImageAsset Include="Assets.xcassets\settings.imageset\Contents.json" />
-    <ImageAsset Include="Assets.xcassets\settings.imageset\services.png" />
-    <ImageAsset Include="Assets.xcassets\settings.imageset\services%402x.png" />
+    <ImageAsset Include="Assets.xcassets\reportit.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\reportit.imageset\report.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\reportit.imageset\report%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\find.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\find.imageset\find.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\find.imageset\find%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\settings.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\settings.imageset\services.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\settings.imageset\services%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using Newtonsoft.Json.Linq;
 using Plugin.Media.Abstractions;
 using Xamarin.Essentials;
@@ -76,8 +77,10 @@ namespace Northampton
             Boolean noStreetsFound = false;
             try
             {
-                var locationRequest = new GeolocationRequest(GeolocationAccuracy.Best);
-                currentLocation = await Geolocation.GetLocationAsync(locationRequest);
+                CancellationTokenSource source = new CancellationTokenSource();
+                CancellationToken cancelToken = source.Token;
+                var locationRequest = new GeolocationRequest(GeolocationAccuracy.Best, TimeSpan.FromSeconds(20));
+                currentLocation = await Geolocation.GetLocationAsync(locationRequest, cancelToken);
 
                 if (currentLocation != null)
                 {
@@ -273,7 +276,17 @@ namespace Northampton
             //MediaFile imageData = Application.Current.Properties["ProblemImage"] as MediaFile;
 
             Stream imageStream = imageData.GetStream();
-            var content = new StringContent(imageStream.ToString(), Encoding.UTF8, "image/png");
+            
+
+            var bytes = new byte[imageStream.Length];
+            await imageStream.ReadAsync(bytes, 0, (int)imageStream.Length);
+            string imageBase64 = Convert.ToBase64String(bytes);
+
+
+            // var content = new StringContent(imageBase64, Encoding.UTF8, "image/png");
+
+            var content = new StreamContent(imageData.GetStream());
+         
             HttpResponseMessage response = await client.PostAsync("/CreateCall?", content);
 
             String jsonResult = await response.Content.ReadAsStringAsync();

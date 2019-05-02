@@ -3,7 +3,7 @@
     <ContentPage.Content>
         <ScrollView x:Name="ScrollView">
             <StackLayout Margin="30" Spacing="30">
-                <maps:Map WidthRequest="320" HeightRequest="200" x:Name="ProblemMap" IsShowingUser="true" MapType="Street" IsVisible="{Binding IsMapVisible}" />
+                <maps:Map WidthRequest="320" HeightRequest="200" x:Name="ProblemMap" IsShowingUser="{Binding IsMapVisible}" MapType="Street" IsVisible="{Binding IsMapVisible}" />
                 <Picker x:Name="streetPicker" Title="Confirm the nearest street here" TitleColor="Gray" ItemsSource="{Binding streets}" SelectedIndex="{Binding StreetPickerIndex}" />
                 <Picker x:Name="typePicker" Title="Confirm the problem here" TitleColor="Gray" ItemsSource="{Binding problems}" SelectedIndex="{Binding TypePickerIndex}" />
                 <Editor Placeholder="Enter any more details here" PlaceholderColor="Gray" AutoSize="TextChanges" HeightRequest="260" Completed="EditorCompleted" />
