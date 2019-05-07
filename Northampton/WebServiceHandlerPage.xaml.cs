@@ -256,7 +256,7 @@ namespace Northampton
             client.DefaultRequestHeaders.Add("ProblemLocation", Application.Current.Properties["ProblemLocation"] as String);
             client.DefaultRequestHeaders.Add("ProblemEmail", problemEmail);
             client.DefaultRequestHeaders.Add("ProblemPhone", problemText);
-            client.DefaultRequestHeaders.Add("Name", Application.Current.Properties["SettingsName"] as String);
+            client.DefaultRequestHeaders.Add("ProblemName", Application.Current.Properties["SettingsName"] as String);
             client.DefaultRequestHeaders.Add("UsedLatLng", Application.Current.Properties["UsedLatLng"] as String);
             HttpContent content = null;
             if (Application.Current.Properties["ProblemUsedImage"].ToString().Equals("true"))
