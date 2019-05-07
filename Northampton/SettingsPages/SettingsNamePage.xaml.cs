@@ -21,7 +21,7 @@ namespace Northampton
             }
             else
             {
-                Navigation.PushAsync(new WebServiceHandlerPage("SendProblemToCRM",null));
+                Navigation.PushAsync(new WebServiceHandlerPage("SendProblemToCRM"));
             }
         }
     }

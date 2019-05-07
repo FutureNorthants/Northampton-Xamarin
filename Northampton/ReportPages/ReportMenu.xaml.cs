@@ -18,7 +18,7 @@ namespace Northampton
             Application.Current.Properties["WebServiceHandlerPageTitle"] = "Report a problem";
             Application.Current.Properties["WebServiceHandlerPageDescription"] = "Please wait whilst we find nearby streets";
             await Application.Current.SavePropertiesAsync();
-            await Navigation.PushAsync(new WebServiceHandlerPage("ReportMenuByLocation",null));
+            await Navigation.PushAsync(new WebServiceHandlerPage("ReportMenuByLocation"));
         }
 
         async void ByStreetNameButtonClicked(object sender, EventArgs args)

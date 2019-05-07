@@ -189,6 +189,7 @@ namespace Northampton
                 if (includesImage)
                 {
                     tempIncludesImage = "true";
+                    Application.Current.Properties["ProblemImage"] = imageData;
                 }
                 else 
                 {
@@ -205,7 +206,7 @@ namespace Northampton
                         {
                             if (Application.Current.Properties.ContainsKey("SettingsName"))
                             {
-                                await Navigation.PushAsync(new WebServiceHandlerPage("SendProblemToCRM",imageData));
+                                await Navigation.PushAsync(new WebServiceHandlerPage("SendProblemToCRM"));
                             }
                             else
                             {
@@ -223,7 +224,7 @@ namespace Northampton
                         {
                             if (Application.Current.Properties.ContainsKey("SettingsName"))
                             {
-                                await Navigation.PushAsync(new WebServiceHandlerPage("SendProblemToCRM",imageData));
+                                await Navigation.PushAsync(new WebServiceHandlerPage("SendProblemToCRM"));
                             }
                             else
                             {
@@ -239,7 +240,7 @@ namespace Northampton
                         //None
                         if (Application.Current.Properties.ContainsKey("SettingsName"))
                         {
-                            await Navigation.PushAsync(new WebServiceHandlerPage("SendProblemToCRM",imageData));
+                            await Navigation.PushAsync(new WebServiceHandlerPage("SendProblemToCRM"));
                         }
                         else
                         {

@@ -18,7 +18,7 @@ namespace Northampton
         private String pageTitle = "";
         private String pageDescription = "";
 
-        public WebServiceHandlerPage(String callingPage, MediaFile imageData)
+        public WebServiceHandlerPage(String callingPage)
         {
             InitializeComponent();
             if (Application.Current.Properties.ContainsKey("WebServiceHandlerPageTitle"))
@@ -47,7 +47,7 @@ namespace Northampton
                     }
                     break;
                 case "SendProblemToCRM":
-                    SendProblemToCRM(imageData);
+                    SendProblemToCRM();
                     break;
                 default:
                     Console.WriteLine("Error4 - callingPage not found");
@@ -197,7 +197,7 @@ namespace Northampton
 
         }
 
-        async void SendProblemToCRM(MediaFile imageData)
+        async void SendProblemToCRM()
         {
             String problemType = "";
             String problemLat = "";
@@ -247,7 +247,6 @@ namespace Northampton
 
             var client = new HttpClient();
             String usedLatLng = Application.Current.Properties["UsedLatLng"] as String;
-            //client.DefaultRequestHeaders.Add("Content-Type", "image/png");
             client.DefaultRequestHeaders.Add("dataSource", "xamarin");
             client.DefaultRequestHeaders.Add("DeviceID", DeviceInfo.Platform.ToString());
             client.DefaultRequestHeaders.Add("ProblemNumber", problemType);
@@ -257,35 +256,25 @@ namespace Northampton
             client.DefaultRequestHeaders.Add("ProblemLocation", Application.Current.Properties["ProblemLocation"] as String);
             client.DefaultRequestHeaders.Add("ProblemEmail", problemEmail);
             client.DefaultRequestHeaders.Add("ProblemPhone", problemText);
+            client.DefaultRequestHeaders.Add("Name", Application.Current.Properties["SettingsName"] as String);
             client.DefaultRequestHeaders.Add("UsedLatLng", Application.Current.Properties["UsedLatLng"] as String);
+            HttpContent content = null;
             if (Application.Current.Properties["ProblemUsedImage"].ToString().Equals("true"))
             {
                 client.DefaultRequestHeaders.Add("includesImage", "true");
-
+                MediaFile imageData = Application.Current.Properties["ProblemImage"] as MediaFile;
+                Stream imageStream = imageData.GetStream();
+                var bytes = new byte[imageStream.Length];
+                await imageStream.ReadAsync(bytes, 0, (int)imageStream.Length);
+                string imageBase64 = Convert.ToBase64String(bytes);
+                content = new StreamContent(imageData.GetStream());
             }
             else
             {
                 client.DefaultRequestHeaders.Add("includesImage", "false");
             }
 
-
             client.BaseAddress = new Uri("https://mycouncil-test.northampton.digital");
-
-            String jsonData = "";
-
-            //MediaFile imageData = Application.Current.Properties["ProblemImage"] as MediaFile;
-
-            Stream imageStream = imageData.GetStream();
-            
-
-            var bytes = new byte[imageStream.Length];
-            await imageStream.ReadAsync(bytes, 0, (int)imageStream.Length);
-            string imageBase64 = Convert.ToBase64String(bytes);
-
-
-            // var content = new StringContent(imageBase64, Encoding.UTF8, "image/png");
-
-            var content = new StreamContent(imageData.GetStream());
          
             HttpResponseMessage response = await client.PostAsync("/CreateCall?", content);
 
