@@ -156,30 +156,37 @@ namespace Northampton
             streetRequest.ContentType = "application/json";
             streetRequest.Method = "GET";
 
-            using (HttpWebResponse response = streetRequest.GetResponse() as HttpWebResponse)
-            {
-                if (response.StatusCode != HttpStatusCode.OK)
-                    Console.Out.WriteLine("Error fetching data. Server returned status code: {0}", response.StatusCode);
-                using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+            try {
+                using (HttpWebResponse response = streetRequest.GetResponse() as HttpWebResponse)
                 {
-                    var content = reader.ReadToEnd();
-                    if (string.IsNullOrWhiteSpace(content))
+                    if (response.StatusCode != HttpStatusCode.OK)
+                        Console.Out.WriteLine("Error fetching data. Server returned status code: {0}", response.StatusCode);
+                    using (StreamReader reader = new StreamReader(response.GetResponseStream()))
                     {
-                        Console.Out.WriteLine("Response contained empty body...");
-                    }
-                    else
-                    {
-                        Console.Out.WriteLine("Response Body: \r\n {0}", content);
-                        Application.Current.Properties["JsonStreets"] = content;
-                        await Application.Current.SavePropertiesAsync();
-                        JObject streetsJSONobject = JObject.Parse(content);
-                        JArray resultsArray = (JArray)streetsJSONobject["results"];
-                        if (resultsArray.Count == 0)
+                        var content = reader.ReadToEnd();
+                        if (string.IsNullOrWhiteSpace(content))
                         {
-                            noStreetsFound = true;
+                            Console.Out.WriteLine("Response contained empty body...");
+                        }
+                        else
+                        {
+                            Console.Out.WriteLine("Response Body: \r\n {0}", content);
+                            Application.Current.Properties["JsonStreets"] = content;
+                            await Application.Current.SavePropertiesAsync();
+                            JObject streetsJSONobject = JObject.Parse(content);
+                            JArray resultsArray = (JArray)streetsJSONobject["results"];
+                            if (resultsArray.Count == 0)
+                            {
+                                noStreetsFound = true;
+                            }
                         }
                     }
                 }
+            }
+            catch(Exception error)
+            {
+                await DisplayAlert("Error", error.ToString(), "OK");
+                await Navigation.PopAsync();
             }
             if (noStreetsFound)
             {
