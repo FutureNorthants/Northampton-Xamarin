@@ -51,7 +51,7 @@ namespace Northampton
             storedProblems.Add(new Problem(0, "litter", "Litter"));
             storedProblems.Add(new Problem(1, "flytip", "Flytipping"));
             storedProblems.Add(new Problem(2, "bodily_fluids", "Bodily Fluids"));
-            storedProblems.Add(new Problem(3, "a dead animal s", "Broken Glass"));
+            storedProblems.Add(new Problem(3, "broken_glass", "Broken Glass"));
             storedProblems.Add(new Problem(4, "dead_animal", "Dead Animal"));
             storedProblems.Add(new Problem(5, "dog_fouling", "Dog Fouling"));
             storedProblems.Add(new Problem(6, "drug_paraphernalia", "Drug Paraphernalia"));
