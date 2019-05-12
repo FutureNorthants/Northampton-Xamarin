@@ -156,7 +156,8 @@ namespace Northampton
             streetRequest.ContentType = "application/json";
             streetRequest.Method = "GET";
 
-            try {
+            try
+            {
                 using (HttpWebResponse response = streetRequest.GetResponse() as HttpWebResponse)
                 {
                     if (response.StatusCode != HttpStatusCode.OK)
@@ -183,7 +184,7 @@ namespace Northampton
                     }
                 }
             }
-            catch(Exception error)
+            catch (Exception error)
             {
                 await DisplayAlert("Error", error.ToString(), "OK");
                 await Navigation.PopAsync();
@@ -264,7 +265,7 @@ namespace Northampton
             client.DefaultRequestHeaders.Add("ProblemEmail", problemEmail);
             client.DefaultRequestHeaders.Add("ProblemPhone", problemText);
             client.DefaultRequestHeaders.Add("ProblemName", Application.Current.Properties["SettingsName"] as String);
-            client.DefaultRequestHeaders.Add("UsedLatLng", Application.Current.Properties["UsedLatLng"] as String);
+            client.DefaultRequestHeaders.Add("ProblemUsedGPS", Application.Current.Properties["UsedLatLng"] as String);
             HttpContent content = null;
             if (Application.Current.Properties["ProblemUsedImage"].ToString().Equals("true"))
             {
@@ -275,6 +276,8 @@ namespace Northampton
                 await imageStream.ReadAsync(bytes, 0, (int)imageStream.Length);
                 string imageBase64 = Convert.ToBase64String(bytes);
                 content = new StreamContent(imageData.GetStream());
+                client.DefaultRequestHeaders.Add("ProblemLatitude", problemLat);
+                client.DefaultRequestHeaders.Add("ProblemLongitude", problemLng);
             }
             else
             {
@@ -290,7 +293,8 @@ namespace Northampton
             if (((string)crmJSONobject.SelectToken("result")).Equals("success"))
             {
                 await Navigation.PushAsync(new ReportResultPage((string)crmJSONobject.SelectToken("callNumber"), (string)crmJSONobject.SelectToken("slaDate")));
-                if (Navigation.NavigationStack.Count > 1){
+                if (Navigation.NavigationStack.Count > 1)
+                {
                     Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
                 }
             }
