@@ -290,7 +290,9 @@ namespace Northampton
             if (((string)crmJSONobject.SelectToken("result")).Equals("success"))
             {
                 await Navigation.PushAsync(new ReportResultPage((string)crmJSONobject.SelectToken("callNumber"), (string)crmJSONobject.SelectToken("slaDate")));
-                Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
+                if (Navigation.NavigationStack.Count > 1){
+                    Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
+                }
             }
             else
             {
