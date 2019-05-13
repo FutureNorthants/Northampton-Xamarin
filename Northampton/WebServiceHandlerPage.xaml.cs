@@ -262,6 +262,7 @@ namespace Northampton
             client.DefaultRequestHeaders.Add("ProblemLongitude", problemLng);
             client.DefaultRequestHeaders.Add("ProblemDescription", Application.Current.Properties["ProblemDescription"] as String);
             client.DefaultRequestHeaders.Add("ProblemLocation", Application.Current.Properties["ProblemLocation"] as String);
+            client.DefaultRequestHeaders.Add("ProblemUSRN", Application.Current.Properties["ProblemUSRN"] as String);
             client.DefaultRequestHeaders.Add("ProblemEmail", problemEmail);
             client.DefaultRequestHeaders.Add("ProblemPhone", problemText);
             client.DefaultRequestHeaders.Add("ProblemName", Application.Current.Properties["SettingsName"] as String);
@@ -276,8 +277,6 @@ namespace Northampton
                 await imageStream.ReadAsync(bytes, 0, (int)imageStream.Length);
                 string imageBase64 = Convert.ToBase64String(bytes);
                 content = new StreamContent(imageData.GetStream());
-                client.DefaultRequestHeaders.Add("ProblemLatitude", problemLat);
-                client.DefaultRequestHeaders.Add("ProblemLongitude", problemLng);
             }
             else
             {
@@ -289,20 +288,30 @@ namespace Northampton
             HttpResponseMessage response = await client.PostAsync("/CreateCall?", content);
 
             String jsonResult = await response.Content.ReadAsStringAsync();
-            JObject crmJSONobject = JObject.Parse(jsonResult);
-            if (((string)crmJSONobject.SelectToken("result")).Equals("success"))
+            if(jsonResult.Contains("HTTP Status "))
             {
-                await Navigation.PushAsync(new ReportResultPage((string)crmJSONobject.SelectToken("callNumber"), (string)crmJSONobject.SelectToken("slaDate")));
-                if (Navigation.NavigationStack.Count > 1)
-                {
-                    Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
-                }
+                int errorIndex = jsonResult.IndexOf("HTTP Status ");
+                await DisplayAlert("Error", "Error " + jsonResult.Substring(errorIndex+12,3) + " from server, please try again later", "OK");
+                await Navigation.PopAsync();
             }
             else
             {
-                await DisplayAlert("Error", "No response from server, please try again later", "OK");
-                await Navigation.PopAsync();
+                JObject crmJSONobject = JObject.Parse(jsonResult);
+                if (((string)crmJSONobject.SelectToken("result")).Equals("success"))
+                {
+                    await Navigation.PushAsync(new ReportResultPage((string)crmJSONobject.SelectToken("callNumber"), (string)crmJSONobject.SelectToken("slaDate")));
+                    if (Navigation.NavigationStack.Count > 1)
+                    {
+                        Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
+                    }
+                }
+                else
+                {
+                    await DisplayAlert("Error", "No response from server, please try again later", "OK");
+                    await Navigation.PopAsync();
+                }
             }
+ 
         }
     }
 }

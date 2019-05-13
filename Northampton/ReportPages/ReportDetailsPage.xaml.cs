@@ -180,6 +180,7 @@ namespace Northampton
                 }
 
                 Application.Current.Properties["ProblemLocation"] = storedStreets[streetPickerIndex].StreetName;
+                Application.Current.Properties["ProblemUSRN"] = storedStreets[streetPickerIndex].USRN;
                 if (Application.Current.Properties["ProblemLat"].ToString().Equals(""))
                 {
                     Application.Current.Properties["ProblemLat"] = storedStreets[streetPickerIndex].Latitude;
