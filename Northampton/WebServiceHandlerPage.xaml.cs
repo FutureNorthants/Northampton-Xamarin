@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -255,12 +254,16 @@ namespace Northampton
 
             var client = new HttpClient();
             String usedLatLng = Application.Current.Properties["UsedLatLng"] as String;
+            String description = Application.Current.Properties["ProblemDescription"] as String;
+
+
             client.DefaultRequestHeaders.Add("dataSource", "xamarin");
             client.DefaultRequestHeaders.Add("DeviceID", DeviceInfo.Platform.ToString());
             client.DefaultRequestHeaders.Add("ProblemNumber", problemType);
             client.DefaultRequestHeaders.Add("ProblemLatitude", problemLat);
             client.DefaultRequestHeaders.Add("ProblemLongitude", problemLng);
-            client.DefaultRequestHeaders.Add("ProblemDescription", Application.Current.Properties["ProblemDescription"] as String);
+            client.DefaultRequestHeaders.Add("ProblemDescription", System.Net.WebUtility.UrlEncode(description));
+            //client.DefaultRequestHeaders.Add("ProblemDescription", Application.Current.Properties["ProblemDescription"] as String);
             client.DefaultRequestHeaders.Add("ProblemLocation", Application.Current.Properties["ProblemLocation"] as String);
             client.DefaultRequestHeaders.Add("ProblemStreet", Application.Current.Properties["ProblemUSRN"] as String);
             client.DefaultRequestHeaders.Add("ProblemEmail", problemEmail);
