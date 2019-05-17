@@ -107,44 +107,54 @@ namespace Northampton
                 Console.WriteLine("Error4 - " + error);
             }
 
-            WebRequest streetRequest = WebRequest.Create(string.Format(@"https://veolia-test.northampton.digital/api/GetStreetByLatLng?lat={0}&lng={1}", currentLocation.Latitude, currentLocation.Longitude));
-            streetRequest.ContentType = "application/json";
-            streetRequest.Method = "GET";
+            NetworkAccess connectivity = Connectivity.NetworkAccess;
 
-            using (HttpWebResponse response = streetRequest.GetResponse() as HttpWebResponse)
+            if (connectivity == NetworkAccess.Internet)
             {
-                if (response.StatusCode != HttpStatusCode.OK)
-                    Console.Out.WriteLine("Error fetching data. Server returned status code: {0}", response.StatusCode);
-                using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+                WebRequest streetRequest = WebRequest.Create(string.Format(@"https://veolia-test.northampton.digital/api/GetStreetByLatLng?lat={0}&lng={1}", currentLocation.Latitude, currentLocation.Longitude));
+                streetRequest.ContentType = "application/json";
+                streetRequest.Method = "GET";
+
+                using (HttpWebResponse response = streetRequest.GetResponse() as HttpWebResponse)
                 {
-                    var content = reader.ReadToEnd();
-                    if (string.IsNullOrWhiteSpace(content))
+                    if (response.StatusCode != HttpStatusCode.OK)
+                        Console.Out.WriteLine("Error fetching data. Server returned status code: {0}", response.StatusCode);
+                    using (StreamReader reader = new StreamReader(response.GetResponseStream()))
                     {
-                        Console.Out.WriteLine("Response contained empty body...");
-                    }
-                    else
-                    {
-                        Console.Out.WriteLine("Response Body: \r\n {0}", content);
-                        Application.Current.Properties["JsonStreets"] = content;
-                        await Application.Current.SavePropertiesAsync();
-                        JObject streetsJSONobject = JObject.Parse(content);
-                        JArray resultsArray = (JArray)streetsJSONobject["results"];
-                        if (resultsArray.Count == 0)
+                        var content = reader.ReadToEnd();
+                        if (string.IsNullOrWhiteSpace(content))
                         {
-                            noStreetsFound = true;
+                            Console.Out.WriteLine("Response contained empty body...");
+                        }
+                        else
+                        {
+                            Console.Out.WriteLine("Response Body: \r\n {0}", content);
+                            Application.Current.Properties["JsonStreets"] = content;
+                            await Application.Current.SavePropertiesAsync();
+                            JObject streetsJSONobject = JObject.Parse(content);
+                            JArray resultsArray = (JArray)streetsJSONobject["results"];
+                            if (resultsArray.Count == 0)
+                            {
+                                noStreetsFound = true;
+                            }
                         }
                     }
                 }
-            }
-            if (noStreetsFound)
-            {
-                await DisplayAlert("Missing Information", "No streets found at this location, please try again", "OK");
-                await Navigation.PopAsync();
+                if (noStreetsFound)
+                {
+                    await DisplayAlert("Missing Information", "No streets found at this location, please try again", "OK");
+                    await Navigation.PopAsync();
+                }
+                else
+                {
+                    await Navigation.PushAsync(new ReportDetailsPage(true));
+                    Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
+                }
             }
             else
             {
-                await Navigation.PushAsync(new ReportDetailsPage(true));
-                Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
+                await DisplayAlert("No Connectivity", "Your device does not currently have an internet connect, please try again later.", "OK");
+                await Navigation.PopAsync();
             }
         }
 
