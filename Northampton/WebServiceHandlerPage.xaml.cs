@@ -149,7 +149,11 @@ namespace Northampton
                 else
                 {
                     await Navigation.PushAsync(new ReportDetailsPage(true));
-                    Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
+
+                    if (Navigation.NavigationStack.Count > 1)
+                    {
+                        Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
+                    }
                 }
             }
             else
@@ -161,6 +165,7 @@ namespace Northampton
 
         async void GetLocationByStreet(String streetName)
         {
+            await Task.Delay(1000);
             NetworkAccess connectivity = Connectivity.NetworkAccess;
 
             if (connectivity == NetworkAccess.Internet)
@@ -277,65 +282,75 @@ namespace Northampton
                 }
             }
 
-            var client = new HttpClient();
+            NetworkAccess connectivity = Connectivity.NetworkAccess;
 
-            client.DefaultRequestHeaders.Add("dataSource", "xamarin");
-            client.DefaultRequestHeaders.Add("DeviceID", DeviceInfo.Platform.ToString());
-            client.DefaultRequestHeaders.Add("ProblemNumber", problemType);
-            client.DefaultRequestHeaders.Add("ProblemLatitude", problemLat);
-            client.DefaultRequestHeaders.Add("ProblemLongitude", problemLng);
-            client.DefaultRequestHeaders.Add("ProblemDescription", System.Net.WebUtility.UrlEncode(Application.Current.Properties["ProblemDescription"] as String));
-            client.DefaultRequestHeaders.Add("ProblemLocation", Application.Current.Properties["ProblemLocation"] as String);
-            client.DefaultRequestHeaders.Add("ProblemStreet", Application.Current.Properties["ProblemUSRN"] as String);
-            client.DefaultRequestHeaders.Add("ProblemEmail", problemEmail);
-            client.DefaultRequestHeaders.Add("ProblemPhone", problemText);
-            client.DefaultRequestHeaders.Add("ProblemName", Application.Current.Properties["SettingsName"] as String);
-            client.DefaultRequestHeaders.Add("ProblemUsedGPS", Application.Current.Properties["UsedLatLng"] as String);
-            HttpContent content = null;
-            if (Application.Current.Properties["ProblemUsedImage"].ToString().Equals("true"))
+            if (connectivity == NetworkAccess.Internet)
             {
-                client.DefaultRequestHeaders.Add("includesImage", "true");
-                MediaFile imageData = Application.Current.Properties["ProblemImage"] as MediaFile;
-                Stream imageStream = imageData.GetStream();
-                var bytes = new byte[imageStream.Length];
-                await imageStream.ReadAsync(bytes, 0, (int)imageStream.Length);
-                string imageBase64 = Convert.ToBase64String(bytes);
-                content = new StreamContent(imageData.GetStream());
-            }
-            else
-            {
-                client.DefaultRequestHeaders.Add("includesImage", "false");
-            }
+                HttpClient client = new HttpClient();
 
-            client.BaseAddress = new Uri("https://mycouncil-test.northampton.digital");
-
-            HttpResponseMessage response = await client.PostAsync("/CreateCall?", content);
-
-            String jsonResult = await response.Content.ReadAsStringAsync();
-            if(jsonResult.Contains("HTTP Status "))
-            {
-                int errorIndex = jsonResult.IndexOf("HTTP Status ");
-                await DisplayAlert("Error", "Error " + jsonResult.Substring(errorIndex+12,3) + " from server, please try again later", "OK");
-                await Navigation.PopAsync();
-            }
-            else
-            {
-                JObject crmJSONobject = JObject.Parse(jsonResult);
-                if (((string)crmJSONobject.SelectToken("result")).Equals("success"))
+                client.DefaultRequestHeaders.Add("dataSource", "xamarin");
+                client.DefaultRequestHeaders.Add("DeviceID", DeviceInfo.Platform.ToString());
+                client.DefaultRequestHeaders.Add("ProblemNumber", problemType);
+                client.DefaultRequestHeaders.Add("ProblemLatitude", problemLat);
+                client.DefaultRequestHeaders.Add("ProblemLongitude", problemLng);
+                client.DefaultRequestHeaders.Add("ProblemDescription", System.Net.WebUtility.UrlEncode(Application.Current.Properties["ProblemDescription"] as String));
+                client.DefaultRequestHeaders.Add("ProblemLocation", Application.Current.Properties["ProblemLocation"] as String);
+                client.DefaultRequestHeaders.Add("ProblemStreet", Application.Current.Properties["ProblemUSRN"] as String);
+                client.DefaultRequestHeaders.Add("ProblemEmail", problemEmail);
+                client.DefaultRequestHeaders.Add("ProblemPhone", problemText);
+                client.DefaultRequestHeaders.Add("ProblemName", Application.Current.Properties["SettingsName"] as String);
+                client.DefaultRequestHeaders.Add("ProblemUsedGPS", Application.Current.Properties["UsedLatLng"] as String);
+                HttpContent content = null;
+                if (Application.Current.Properties["ProblemUsedImage"].ToString().Equals("true"))
                 {
-                    await Navigation.PushAsync(new ReportResultPage((string)crmJSONobject.SelectToken("callNumber"), (string)crmJSONobject.SelectToken("slaDate")));
-                    if (Navigation.NavigationStack.Count > 1)
-                    {
-                        Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
-                    }
+                    client.DefaultRequestHeaders.Add("includesImage", "true");
+                    MediaFile imageData = Application.Current.Properties["ProblemImage"] as MediaFile;
+                    Stream imageStream = imageData.GetStream();
+                    var bytes = new byte[imageStream.Length];
+                    await imageStream.ReadAsync(bytes, 0, (int)imageStream.Length);
+                    string imageBase64 = Convert.ToBase64String(bytes);
+                    content = new StreamContent(imageData.GetStream());
                 }
                 else
                 {
-                    await DisplayAlert("Error", "No response from server, please try again later", "OK");
+                    client.DefaultRequestHeaders.Add("includesImage", "false");
+                }
+
+                client.BaseAddress = new Uri("https://mycouncil-test.northampton.digital");
+
+                HttpResponseMessage response = await client.PostAsync("/CreateCall?", content);
+
+                String jsonResult = await response.Content.ReadAsStringAsync();
+                if (jsonResult.Contains("HTTP Status "))
+                {
+                    int errorIndex = jsonResult.IndexOf("HTTP Status ", StringComparison.Ordinal);
+                    await DisplayAlert("Error", "Error " + jsonResult.Substring(errorIndex + 12, 3) + " from server, please try again later", "OK");
                     await Navigation.PopAsync();
                 }
+                else
+                {
+                    JObject crmJSONobject = JObject.Parse(jsonResult);
+                    if (((string)crmJSONobject.SelectToken("result")).Equals("success"))
+                    {
+                        await Navigation.PushAsync(new ReportResultPage((string)crmJSONobject.SelectToken("callNumber"), (string)crmJSONobject.SelectToken("slaDate")));
+                        if (Navigation.NavigationStack.Count > 1)
+                        {
+                            Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
+                        }
+                    }
+                    else
+                    {
+                        await DisplayAlert("Error", "No response from server, please try again later", "OK");
+                        await Navigation.PopAsync();
+                    }
+                }
             }
- 
+            else
+            {
+                await Task.Delay(5000);
+                await DisplayAlert("No Connectivity", "Your device does not currently have an internet connection, please try again later.", "OK");
+                await Navigation.PopAsync();
+            }
         }
     }
 }
