@@ -23,13 +23,18 @@
                     </FormattedString>
                 </Label.FormattedText>
             </Label>
-                       <Label AbsoluteLayout.LayoutBounds=".5,.65,-1,-1" LineBreakMode="WordWrap" AbsoluteLayout.LayoutFlags="PositionProportional">
+            <Label AbsoluteLayout.LayoutBounds=".5,.65,-1,-1" LineBreakMode="WordWrap" AbsoluteLayout.LayoutFlags="PositionProportional">
                 <Label.FormattedText>
                     <FormattedString>
                         <Span Text="{Binding SLAText}" TextColor="Red" Font="Bold, 30" />
                     </FormattedString>
                 </Label.FormattedText>
             </Label>
+            <Button AbsoluteLayout.LayoutBounds=".5,.85,-1,-1" AbsoluteLayout.LayoutFlags="PositionProportional" Text="Report another issue" Style="{StaticResource buttonStyle}" Clicked="ReportAnotherButtonClicked">
+                <Button.IsVisible>
+                    <OnPlatform x:TypeArguments="x:Boolean" iOS="false" Android="true" />
+                </Button.IsVisible>
+            </Button>
         </AbsoluteLayout>
     </ContentPage.Content>
 </ContentPage>

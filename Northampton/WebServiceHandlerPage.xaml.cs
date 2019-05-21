@@ -2,7 +2,6 @@
 using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
@@ -89,77 +88,69 @@ namespace Northampton
                     Application.Current.Properties["ProblemLng"] = currentLocation.Longitude.ToString();
                     await Application.Current.SavePropertiesAsync();
                 }
+                NetworkAccess connectivity = Connectivity.NetworkAccess;
 
-            }
-            catch (FeatureNotSupportedException error)
-            {
-                Console.WriteLine("Error1 - " + error);
-            }
-            catch (FeatureNotEnabledException error)
-            {
-                Console.WriteLine("Error2 - " + error);
-            }
-            catch (PermissionException error)
-            {
-                Console.WriteLine("Error3 - " + error);
-            }
-            catch (Exception error)
-            {
-                Console.WriteLine("Error4 - " + error);
-            }
-
-            NetworkAccess connectivity = Connectivity.NetworkAccess;
-
-            if (connectivity == NetworkAccess.Internet)
-            {
-                WebRequest streetRequest = WebRequest.Create(string.Format(@"https://veolia-test.northampton.digital/api/GetStreetByLatLng?lat={0}&lng={1}", currentLocation.Latitude, currentLocation.Longitude));
-                streetRequest.ContentType = "application/json";
-                streetRequest.Method = "GET";
-
-                using (HttpWebResponse response = streetRequest.GetResponse() as HttpWebResponse)
+                if (connectivity == NetworkAccess.Internet)
                 {
-                    if (response.StatusCode != HttpStatusCode.OK)
-                        Console.Out.WriteLine("Error fetching data. Server returned status code: {0}", response.StatusCode);
-                    using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+                    WebRequest streetRequest = WebRequest.Create(string.Format(@"https://veolia-test.northampton.digital/api/GetStreetByLatLng?lat={0}&lng={1}", currentLocation.Latitude, currentLocation.Longitude));
+                    streetRequest.ContentType = "application/json";
+                    streetRequest.Method = "GET";
+
+                    using (HttpWebResponse response = streetRequest.GetResponse() as HttpWebResponse)
                     {
-                        var content = reader.ReadToEnd();
-                        if (string.IsNullOrWhiteSpace(content))
+                        if (response.StatusCode != HttpStatusCode.OK)
+                            Console.Out.WriteLine("Error fetching data. Server returned status code: {0}", response.StatusCode);
+                        using (StreamReader reader = new StreamReader(response.GetResponseStream()))
                         {
-                            Console.Out.WriteLine("Response contained empty body...");
-                        }
-                        else
-                        {
-                            Console.Out.WriteLine("Response Body: \r\n {0}", content);
-                            Application.Current.Properties["JsonStreets"] = content;
-                            await Application.Current.SavePropertiesAsync();
-                            JObject streetsJSONobject = JObject.Parse(content);
-                            JArray resultsArray = (JArray)streetsJSONobject["results"];
-                            if (resultsArray.Count == 0)
+                            var content = reader.ReadToEnd();
+                            if (string.IsNullOrWhiteSpace(content))
                             {
-                                noStreetsFound = true;
+                                Console.Out.WriteLine("Response contained empty body...");
+                            }
+                            else
+                            {
+                                Console.Out.WriteLine("Response Body: \r\n {0}", content);
+                                Application.Current.Properties["JsonStreets"] = content;
+                                await Application.Current.SavePropertiesAsync();
+                                JObject streetsJSONobject = JObject.Parse(content);
+                                JArray resultsArray = (JArray)streetsJSONobject["results"];
+                                if (resultsArray.Count == 0)
+                                {
+                                    noStreetsFound = true;
+                                }
                             }
                         }
                     }
-                }
-                if (noStreetsFound)
-                {
-                    await DisplayAlert("Missing Information", "No streets found at this location, please try again", "OK");
-                    await Navigation.PopAsync();
+                    if (noStreetsFound)
+                    {
+                        await DisplayAlert("Missing Information", "No streets found at this location, please try again", "OK");
+                        await Navigation.PopAsync();
+                    }
+                    else
+                    {
+                        await Navigation.PushAsync(new ReportDetailsPage(true));
+
+                        if (Navigation.NavigationStack.Count > 1)
+                        {
+                            Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
+                        }
+                    }
                 }
                 else
                 {
-                    await Navigation.PushAsync(new ReportDetailsPage(true));
-
-                    if (Navigation.NavigationStack.Count > 1)
-                    {
-                        Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
-                    }
+                    await DisplayAlert("No Connectivity", "Your device does not currently have an internet connection, please try again later.", "OK");
+                    await Navigation.PopAsync();
                 }
             }
-            else
+            catch (Exception)
             {
-                await DisplayAlert("No Connectivity", "Your device does not currently have an internet connection, please try again later.", "OK");
-                await Navigation.PopAsync();
+                Application.Current.Properties["ProblemLat"] = "";
+                Application.Current.Properties["ProblemLng"] = "";
+                Application.Current.Properties["UsedLatLng"] = "false";
+                Application.Current.Properties["WebServiceHandlerPageTitle"] = "Report a problem";
+                Application.Current.Properties["WebServiceHandlerPageDescription"] = "Please wait whilst we find that street";
+                await Application.Current.SavePropertiesAsync();
+                await Navigation.PushAsync(new ReportStreetNamePage());
             }
         }
 
@@ -293,7 +284,7 @@ namespace Northampton
                 client.DefaultRequestHeaders.Add("ProblemNumber", problemType);
                 client.DefaultRequestHeaders.Add("ProblemLatitude", problemLat);
                 client.DefaultRequestHeaders.Add("ProblemLongitude", problemLng);
-                client.DefaultRequestHeaders.Add("ProblemDescription", System.Net.WebUtility.UrlEncode(Application.Current.Properties["ProblemDescription"] as String));
+                client.DefaultRequestHeaders.Add("ProblemDescription", WebUtility.UrlEncode(Application.Current.Properties["ProblemDescription"] as String));
                 client.DefaultRequestHeaders.Add("ProblemLocation", Application.Current.Properties["ProblemLocation"] as String);
                 client.DefaultRequestHeaders.Add("ProblemStreet", Application.Current.Properties["ProblemUSRN"] as String);
                 client.DefaultRequestHeaders.Add("ProblemEmail", problemEmail);
@@ -318,31 +309,39 @@ namespace Northampton
 
                 client.BaseAddress = new Uri("https://mycouncil-test.northampton.digital");
 
-                HttpResponseMessage response = await client.PostAsync("/CreateCall?", content);
-
-                String jsonResult = await response.Content.ReadAsStringAsync();
-                if (jsonResult.Contains("HTTP Status "))
+                try
                 {
-                    int errorIndex = jsonResult.IndexOf("HTTP Status ", StringComparison.Ordinal);
-                    await DisplayAlert("Error", "Error " + jsonResult.Substring(errorIndex + 12, 3) + " from server, please try again later", "OK");
-                    await Navigation.PopAsync();
-                }
-                else
-                {
-                    JObject crmJSONobject = JObject.Parse(jsonResult);
-                    if (((string)crmJSONobject.SelectToken("result")).Equals("success"))
+                    HttpResponseMessage response = await client.PostAsync("/CreateCall?", content);
+                    String jsonResult = await response.Content.ReadAsStringAsync();
+                    if (jsonResult.Contains("HTTP Status "))
                     {
-                        await Navigation.PushAsync(new ReportResultPage((string)crmJSONobject.SelectToken("callNumber"), (string)crmJSONobject.SelectToken("slaDate")));
-                        if (Navigation.NavigationStack.Count > 1)
-                        {
-                            Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
-                        }
+                        int errorIndex = jsonResult.IndexOf("HTTP Status ", StringComparison.Ordinal);
+                        await DisplayAlert("Error", "Error " + jsonResult.Substring(errorIndex + 12, 3) + " from server, please try again later", "OK");
+                        await Navigation.PopAsync();
                     }
                     else
                     {
-                        await DisplayAlert("Error", "No response from server, please try again later", "OK");
-                        await Navigation.PopAsync();
+                        JObject crmJSONobject = JObject.Parse(jsonResult);
+                        if (((string)crmJSONobject.SelectToken("result")).Equals("success"))
+                        {
+                            await Navigation.PushAsync(new ReportResultPage((string)crmJSONobject.SelectToken("callNumber"), (string)crmJSONobject.SelectToken("slaDate")));
+                            if (Navigation.NavigationStack.Count > 1)
+                            {
+                                Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
+                            }
+                        }
+                        else
+                        {
+                            await DisplayAlert("Error", "No response from server, please try again later", "OK");
+                            await Navigation.PopAsync();
+                        }
                     }
+                }
+                catch (Exception)
+                {
+                    await Task.Delay(5000);
+                    await DisplayAlert("No Connectivity", "Your device does not currently have an internet connection, please try again later.", "OK");
+                    await Navigation.PopAsync();
                 }
             }
             else

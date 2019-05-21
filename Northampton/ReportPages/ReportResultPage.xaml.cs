@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Xamarin.Forms;
 
 namespace Northampton
@@ -32,5 +33,12 @@ namespace Northampton
             }
         }
 
+        void ReportAnotherButtonClicked(object sender, EventArgs args)
+        {
+            if (Navigation.NavigationStack.Count > 0)
+            {
+                Navigation.PopToRootAsync();
+            }
+        }
     }
 }
