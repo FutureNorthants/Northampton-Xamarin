@@ -25,7 +25,7 @@ namespace Northampton
             {
                 if (settingsPostcode != value)
                 {
-                    settingsPostcode = value.ToUpper();
+                    settingsPostcode = value;
                     Application.Current.Properties["SettingsPostcode"] = settingsPostcode;
                     Application.Current.SavePropertiesAsync();
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SettingsPostcode"));

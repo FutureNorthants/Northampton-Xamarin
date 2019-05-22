@@ -13,7 +13,21 @@ namespace Northampton
 
         void Entry_Completed(object sender, EventArgs e)
         {
-            Navigation.PopAsync();
+            String postCode = ((Entry)sender).Text;
+            if (!Validators.IsValidPostcode(postCode))
+            {
+                DisplayAlert("Invalid Postcode", "Please enter a valid UK postcode.", "OK");
+            }
+            else
+            if (!Validators.IsValidAreaPostcode(postCode))
+            {
+                DisplayAlert("Postcode not in area", "Please enter a valid area postcode.", "OK");
+            }
+            else
+            {
+                Navigation.PopAsync();
+            }
+
         }
     }
 }

@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Northampton.SettingsPostcodePage" xmlns:local="clr-namespace:Northampton;assembly=Northampton" Title="My Postcode">
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Northampton.SettingsPostcodePage" xmlns:local="clr-namespace:Northampton;assembly=Northampton" Title="My Postcode" Style="{StaticResource pageStyle}">
     <ContentPage.Content>
         <FlexLayout Direction="Column" JustifyContent="SpaceEvenly" AlignItems="Center">
-            <Entry Placeholder="Type your postcode here" Text="{Binding SettingsPostcode, Mode=TwoWay}" PlaceholderColor="Gray" Keyboard="Text" IsSpellCheckEnabled="false" IsTextPredictionEnabled="false" Completed="Entry_Completed">
+            <Entry Placeholder="Type your postcode here" Text="{Binding SettingsPostcode, Mode=TwoWay}" MaxLength="7" PlaceholderColor="Gray" Keyboard="Text" IsSpellCheckEnabled="false" IsTextPredictionEnabled="false" Completed="Entry_Completed">
+                <Entry.Keyboard>
+                    <Keyboard x:FactoryMethod="Create">
+                        <x:Arguments>
+                            <KeyboardFlags>CapitalizeCharacter</KeyboardFlags>
+                        </x:Arguments>
+                    </Keyboard>
+                </Entry.Keyboard>
                 <Entry.BindingContext>
                     <local:SettingsPostcodeViewModel />
                 </Entry.BindingContext>

@@ -30,9 +30,11 @@
     <Compile Remove="ReportCurrentLocationPage.xaml.cs" />
     <Compile Remove="ViewModels\ReportDetailsProblemViewModel.cs" />
     <Compile Remove="ViewModels\ReportDetailsViewModel.cs" />
+    <Compile Remove="Helpers\ValidationResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ViewModels\" />
     <Folder Include="ReportPages\" />
+    <Folder Include="Helpers\" />
   </ItemGroup>
 </Project>
