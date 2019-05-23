@@ -5,12 +5,11 @@
             <local:ReportMenu />
         </x:Arguments>
     </NavigationPage>
-    <ContentPage Title="Find" Icon="find.png">
-        <StackLayout>
-            <Label Text="Green" HorizontalTextAlignment="Center" HorizontalOptions="FillAndExpand" Margin="5" />
-            <BoxView Color="Green" VerticalOptions="FillAndExpand" />
-        </StackLayout>
-    </ContentPage>
+    <NavigationPage Title="Find" Icon="find.png">
+        <x:Arguments>
+            <local:SettingsPostcodePage/>
+        </x:Arguments>
+    </NavigationPage>
     <NavigationPage Title="Settings" Icon="settings.png">
         <x:Arguments>
             <local:SettingsMenu />

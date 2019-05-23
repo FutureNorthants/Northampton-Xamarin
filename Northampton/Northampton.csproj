@@ -31,10 +31,12 @@
     <Compile Remove="ViewModels\ReportDetailsProblemViewModel.cs" />
     <Compile Remove="ViewModels\ReportDetailsViewModel.cs" />
     <Compile Remove="Helpers\ValidationResult.cs" />
+    <Compile Remove="BinFinderPages\BinFinderPostcode.xaml.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ViewModels\" />
     <Folder Include="ReportPages\" />
     <Folder Include="Helpers\" />
+    <Folder Include="BinFinderPages\" />
   </ItemGroup>
 </Project>
