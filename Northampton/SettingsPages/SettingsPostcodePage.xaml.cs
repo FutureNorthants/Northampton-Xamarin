@@ -25,6 +25,13 @@ namespace Northampton
             }
             else
             {
+                String settingsPostcode = Application.Current.Properties["SettingsPostcode"] as String;
+                if (settingsPostcode.Length == 6)
+                {
+                    settingsPostcode = settingsPostcode.Substring(0, 3) + " " + settingsPostcode.Substring(3, 3);
+                }
+                Application.Current.Properties["SettingsPostcode"] = settingsPostcode;
+                Application.Current.SavePropertiesAsync();
                 Navigation.PopAsync();
             }
 

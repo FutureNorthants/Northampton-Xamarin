@@ -21,6 +21,7 @@
     <EmbeddedResource Remove="MainTab.xaml" />
     <EmbeddedResource Remove="SettingsNamePage %28copy%29.xaml" />
     <EmbeddedResource Remove="ReportCurrentLocationPage.xaml" />
+    <EmbeddedResource Remove="BinFinderPages\BinFinderPostcodePage.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="MainTab.xaml.cs" />
@@ -32,6 +33,7 @@
     <Compile Remove="ViewModels\ReportDetailsViewModel.cs" />
     <Compile Remove="Helpers\ValidationResult.cs" />
     <Compile Remove="BinFinderPages\BinFinderPostcode.xaml.cs" />
+    <Compile Remove="BinFinderPages\BinFinderPostcodePage.xaml.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ViewModels\" />
