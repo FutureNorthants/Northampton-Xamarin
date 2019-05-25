@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Xamarin.Forms;
 
 namespace Northampton

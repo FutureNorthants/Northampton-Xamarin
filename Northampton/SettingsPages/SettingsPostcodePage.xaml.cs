@@ -34,7 +34,6 @@ namespace Northampton
                 Application.Current.SavePropertiesAsync();
                 Navigation.PopAsync();
             }
-
         }
     }
 }

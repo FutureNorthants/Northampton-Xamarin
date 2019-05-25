@@ -15,6 +15,8 @@ namespace Northampton
             if (Application.Current.Properties.ContainsKey("SettingsPostcode"))
             {
                 settingsPostcode = Application.Current.Properties["SettingsPostcode"] as String;
+                Application.Current.Properties["CollectionFinderPostcode"] = settingsPostcode;
+                Application.Current.SavePropertiesAsync();
             }
 
         }

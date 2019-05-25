@@ -7,7 +7,7 @@
     </NavigationPage>
     <NavigationPage Title="Find" Icon="find.png">
         <x:Arguments>
-            <local:SettingsPostcodePage/>
+            <local:CollectionFinderPostcodePage/>
         </x:Arguments>
     </NavigationPage>
     <NavigationPage Title="Settings" Icon="settings.png">

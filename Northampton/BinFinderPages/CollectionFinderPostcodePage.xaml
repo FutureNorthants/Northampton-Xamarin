@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Northampton.CollectionFinderPostcodePage" xmlns:local="clr-namespace:Northampton;assembly=Northampton" Title="My Postcode" Style="{StaticResource pageStyle}">
+    <ContentPage.Content>
+        <FlexLayout Direction="Column" JustifyContent="SpaceEvenly" AlignItems="Center">
+            <Entry Placeholder="Type your postcode here" Text="{Binding CollectionFinderPostcode, Mode=TwoWay}" MaxLength="7" PlaceholderColor="Gray" Keyboard="Text" IsSpellCheckEnabled="false" IsTextPredictionEnabled="false" Completed="Entry_Completed">
+                <Entry.Keyboard>
+                    <Keyboard x:FactoryMethod="Create">
+                        <x:Arguments>
+                            <KeyboardFlags>CapitalizeCharacter</KeyboardFlags>
+                        </x:Arguments>
+                    </Keyboard>
+                </Entry.Keyboard>
+                <Entry.BindingContext>
+                    <local:CollectionFinderPostcodeViewModel />
+                </Entry.BindingContext>
+            </Entry>
+            <Button x:Name="GetCollectionInfoButton" Text="Get Collection Info" Style="{StaticResource buttonStyle}" Clicked="GetCollectionInfoButtonClicked"/>
+        </FlexLayout>
+    </ContentPage.Content>
+</ContentPage>
