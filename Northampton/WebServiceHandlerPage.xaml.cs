@@ -48,6 +48,9 @@ namespace Northampton
                 case "SendProblemToCRM":
                     SendProblemToCRM();
                     break;
+                case "GetCollectionDetails":
+                    GetCollectionDetails(Application.Current.Properties["CollectionFinderPostcode"] as String);
+                    break;
                 default:
                     Console.WriteLine("Error4 - callingPage not found");
                     break;
@@ -347,6 +350,77 @@ namespace Northampton
             else
             {
                 await Task.Delay(5000);
+                await DisplayAlert("No Connectivity", "Your device does not currently have an internet connection, please try again later.", "OK");
+                await Navigation.PopAsync();
+            }
+        }
+
+        async void GetCollectionDetails(String postCode)
+        {
+            await Task.Delay(1000);
+            NetworkAccess connectivity = Connectivity.NetworkAccess;
+
+            if (connectivity == NetworkAccess.Internet)
+            {
+                Boolean noPostcodeFound = false;
+                WebRequest streetRequest = WebRequest.Create(string.Format(@"https://mycouncil.northampton.digital/BinRoundFinder?postcode={0}", postCode));
+                streetRequest.ContentType = "application/json";
+                streetRequest.Method = "GET";
+
+                try
+                {
+                    using (HttpWebResponse response = streetRequest.GetResponse() as HttpWebResponse)
+                    {
+                        if (response.StatusCode != HttpStatusCode.OK)
+                            Console.Out.WriteLine("Error fetching data. Server returned status code: {0}", response.StatusCode);
+                        using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+                        {
+                            var content = reader.ReadToEnd();
+                            if (string.IsNullOrWhiteSpace(content))
+                            {
+                                Console.Out.WriteLine("Response contained empty body...");
+                            }
+                            else
+                            {
+                                Console.Out.WriteLine("Response Body: \r\n {0}", content);
+                                Application.Current.Properties["JsonStreets"] = content;
+                                await Application.Current.SavePropertiesAsync();
+                                JObject streetsJSONobject = JObject.Parse(content);
+                                JArray resultsArray = (JArray)streetsJSONobject["results"];
+                                if (resultsArray.Count == 0)
+                                {
+                                    noPostcodeFound = true;
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception error)
+                {
+                    await DisplayAlert("Error", error.ToString(), "OK");
+                    await Navigation.PopAsync();
+                }
+                if (noPostcodeFound)
+                {
+                    await DisplayAlert("Missing Information", "No collection details found for postcode '" + postCode + "', please check postcode and try again", "OK");
+                    await Navigation.PopAsync();
+                }
+                else
+                {
+                    await Navigation.PushAsync(new ReportDetailsPage(false));
+                    if (Navigation.NavigationStack.Count > 1)
+                    {
+                        Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
+                    }
+                }
+            }
+            else
+            {
+                await Task.Delay(5000);
+                if (Navigation.NavigationStack.Count > 1)
+                {
+                    Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
+                }
                 await DisplayAlert("No Connectivity", "Your device does not currently have an internet connection, please try again later.", "OK");
                 await Navigation.PopAsync();
             }

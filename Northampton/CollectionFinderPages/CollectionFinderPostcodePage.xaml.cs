@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Xamarin.Forms;
 
 namespace Northampton
@@ -39,14 +38,10 @@ namespace Northampton
                 {
                     postCode = postCode.Substring(0, 3) + " " + postCode.Substring(3, 3);
                 }
-                if (Navigation.NavigationStack.Count == 1)
-                {
-                    DisplayAlert("Debug", "Next PageB", "OK");
-                }
-                else
-                {
-                    Navigation.PopAsync();
-                }
+                Application.Current.Properties["WebServiceHandlerPageTitle"] = "Find your collection day";
+                Application.Current.Properties["WebServiceHandlerPageDescription"] = "Please wait whilst we find your collection details";
+                Application.Current.SavePropertiesAsync();
+                Navigation.PushAsync(new WebServiceHandlerPage("GetCollectionDetails"));
             }
         }
     }

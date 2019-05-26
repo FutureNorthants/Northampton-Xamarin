@@ -39,6 +39,6 @@
     <Folder Include="ViewModels\" />
     <Folder Include="ReportPages\" />
     <Folder Include="Helpers\" />
-    <Folder Include="BinFinderPages\" />
+    <Folder Include="CollectionFinderPages\" />
   </ItemGroup>
 </Project>
