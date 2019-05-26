@@ -34,6 +34,7 @@
     <Compile Remove="Helpers\ValidationResult.cs" />
     <Compile Remove="BinFinderPages\BinFinderPostcode.xaml.cs" />
     <Compile Remove="BinFinderPages\BinFinderPostcodePage.xaml.cs" />
+    <Compile Remove="Helpers\WebServiceHandlerPage.xaml.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ViewModels\" />
