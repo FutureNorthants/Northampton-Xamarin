@@ -362,6 +362,7 @@ namespace Northampton
 
             if (connectivity == NetworkAccess.Internet)
             {
+                JObject propertiesJSONobject = null;
                 Boolean noPostcodeFound = false;
                 WebRequest streetRequest = WebRequest.Create(string.Format(@"https://mycouncil.northampton.digital/BinRoundFinder?postcode={0}", postCode));
                 streetRequest.ContentType = "application/json";
@@ -383,11 +384,11 @@ namespace Northampton
                             else
                             {
                                 Console.Out.WriteLine("Response Body: \r\n {0}", content);
-                                Application.Current.Properties["JsonStreets"] = content;
+                                Application.Current.Properties["JsonProperties"] = content;
                                 await Application.Current.SavePropertiesAsync();
-                                JObject streetsJSONobject = JObject.Parse(content);
-                                JArray resultsArray = (JArray)streetsJSONobject["results"];
-                                if (resultsArray.Count == 0)
+                                propertiesJSONobject = JObject.Parse(content);
+                                String temp = (string)propertiesJSONobject.SelectToken("rounds");
+                                if (!((string)propertiesJSONobject.SelectToken("result")).Equals("success"))
                                 {
                                     noPostcodeFound = true;
                                 }
@@ -407,7 +408,19 @@ namespace Northampton
                 }
                 else
                 {
-                    await Navigation.PushAsync(new ReportDetailsPage(false));
+                    switch ((string)propertiesJSONobject.SelectToken("rounds"))
+                    {
+                        case "single":
+                            //await Navigation.PushAsync(new ReportDetailsPage(false));                        
+                            break;
+                        case "multiple":
+                            //await Navigation.PushAsync(new ReportDetailsPage(false));                           
+                            break;
+                        default:
+                            await DisplayAlert("Error", "Unable to find collection information", "OK");
+                            await Navigation.PopAsync();
+                            break;
+                    }
                     if (Navigation.NavigationStack.Count > 1)
                     {
                         Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
