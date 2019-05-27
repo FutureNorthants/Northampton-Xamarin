@@ -8,6 +8,7 @@ namespace Northampton
     public partial class CollectionFinderPropertyPage : ContentPage
     {
         private int propertyPickerIndex = -1;
+        IList<Property> storedProperties = new List<Property>();
 
         public CollectionFinderPropertyPage()
         {
@@ -24,6 +25,7 @@ namespace Northampton
             set
             {
                 propertyPickerIndex = value;
+                Navigation.PushAsync(new CollectionFinderResultPage(storedProperties[propertyPickerIndex].CollectionDay,storedProperties[propertyPickerIndex].CollectionType));
             }
         }
 
@@ -42,22 +44,9 @@ namespace Northampton
                 for (int currentResult = 0; currentResult < resultsArray.Count; currentResult++)
                 {
                     tempProperties.Add(resultsArray[currentResult]["property"].ToString());
-                    //if (Application.Current.Properties["ProblemLat"].ToString().Equals(""))
-                    //{
-                    //    storedStreets.Add(new Street(resultsArray[currentResult][0].ToString(),
-                    //                                 resultsArray[currentResult][1].ToString(),
-                    //                                 resultsArray[currentResult][2].ToString(),
-                    //                                 resultsArray[currentResult][3].ToString()
-                    //                                 ));
-                    //}
-                    //else
-                    //{
-                    //    storedStreets.Add(new Street(resultsArray[currentResult][0].ToString(),
-                    //                                 resultsArray[currentResult][1].ToString(),
-                    //                                 "",
-                    //                                 ""
-                    //                                 ));
-                    //}
+                    storedProperties.Add(new Property(resultsArray[currentResult]["day"].ToString(),
+                                                   resultsArray[currentResult]["type"].ToString()
+                                                 ));
 
                 }
                 if (resultsArray.Count == 1)
@@ -66,6 +55,17 @@ namespace Northampton
                 }
                 return tempProperties;
             }
+        }
+    }
+
+    public class Property
+    {
+        public String CollectionDay { get; set; }
+        public String CollectionType { get; set; }
+        public Property(String collectionDay, String collectionType)
+        {
+            CollectionDay = collectionDay;
+            CollectionType = collectionType;
         }
     }
 }
