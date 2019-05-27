@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Northampton.CollectionFinderPropertyPage" Title="Find Collection" Style="{StaticResource pageStyle}">
+    <ContentPage.Content>
+        <StackLayout Margin="30" Spacing="30">
+            <Picker x:Name="propertyPicker" Title="Confirm the property here" TitleColor="Gray" ItemsSource="{Binding Properties}" SelectedIndex="{Binding PropertyPickerIndex}" />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

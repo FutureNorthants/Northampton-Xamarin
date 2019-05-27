@@ -414,7 +414,7 @@ namespace Northampton
                             await Navigation.PushAsync(new CollectionFinderResultPage((String)propertiesJSONobject.SelectToken("day"), (String)propertiesJSONobject.SelectToken("type")));                        
                             break;
                         case "multiple":
-                            //await Navigation.PushAsync(new ReportDetailsPage(false));                           
+                            await Navigation.PushAsync(new CollectionFinderPropertyPage());                           
                             break;
                         default:
                             await DisplayAlert("Error", "Unable to find collection information", "OK");
