@@ -4,10 +4,13 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Plugin.Media.Abstractions;
 using Xamarin.Essentials;
 using Xamarin.Forms;
+using System.Text.Encodings.Web;
 
 namespace Northampton
 {
@@ -287,7 +290,7 @@ namespace Northampton
                 client.DefaultRequestHeaders.Add("ProblemNumber", problemType);
                 client.DefaultRequestHeaders.Add("ProblemLatitude", problemLat);
                 client.DefaultRequestHeaders.Add("ProblemLongitude", problemLng);
-                client.DefaultRequestHeaders.Add("ProblemDescription", WebUtility.UrlEncode(Application.Current.Properties["ProblemDescription"] as String));
+                client.DefaultRequestHeaders.Add("ProblemDescription", JavaScriptEncoder.Default.Encode(Application.Current.Properties["ProblemDescription"] as String));
                 client.DefaultRequestHeaders.Add("ProblemLocation", Application.Current.Properties["ProblemLocation"] as String);
                 client.DefaultRequestHeaders.Add("ProblemStreet", Application.Current.Properties["ProblemUSRN"] as String);
                 client.DefaultRequestHeaders.Add("ProblemEmail", problemEmail);
