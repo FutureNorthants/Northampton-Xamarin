@@ -17,6 +17,8 @@
     <PackageReference Include="Xamarin.Forms.Maps" Version="3.6.0.344457" />
     <PackageReference Include="Xam.Plugin.Media" Version="4.0.1.5" />
     <PackageReference Include="System.Text.Encodings.Web" Version="4.5.0" />
+    <PackageReference Include="Microsoft.AppCenter.Analytics" Version="2.1.1" />
+    <PackageReference Include="Microsoft.AppCenter.Crashes" Version="2.1.1" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Remove="MainTab.xaml" />

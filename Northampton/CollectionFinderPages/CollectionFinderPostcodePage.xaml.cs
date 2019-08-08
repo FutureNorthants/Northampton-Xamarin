@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.AppCenter.Analytics;
 using Xamarin.Forms;
 
 namespace Northampton
@@ -8,6 +9,7 @@ namespace Northampton
         public CollectionFinderPostcodePage()
         {
             InitializeComponent();
+            Analytics.TrackEvent("Started CollectionFinder");
         }
 
         void Entry_Completed(object sender, EventArgs e)

@@ -1,15 +1,14 @@
 {
   "images": [
     {
+      "filename": "Report.pdf",
       "idiom": "universal"
     },
     {
-      "filename": "report.png",
       "scale": "1x",
       "idiom": "universal"
     },
     {
-      "filename": "report@2x.png",
       "scale": "2x",
       "idiom": "universal"
     },

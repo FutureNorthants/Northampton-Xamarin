@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using Microsoft.AppCenter.Analytics;
 using Xamarin.Forms;
 
 namespace Northampton
@@ -10,6 +10,7 @@ namespace Northampton
         {
             InitializeComponent();
             Application.Current.Properties["ProblemDescription"] = "";
+            Analytics.TrackEvent("Started ReportIt");
         }
 
         async void AtThisLocationButtonClicked(object sender, EventArgs args)

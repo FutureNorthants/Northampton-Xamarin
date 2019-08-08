@@ -1,15 +1,14 @@
 {
   "images": [
     {
+      "filename": "Search.pdf",
       "idiom": "universal"
     },
     {
-      "filename": "find.png",
       "scale": "1x",
       "idiom": "universal"
     },
     {
-      "filename": "find@2x.png",
       "scale": "2x",
       "idiom": "universal"
     },
