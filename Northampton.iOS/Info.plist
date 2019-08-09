@@ -25,7 +25,7 @@
 	<key>CFBundleDisplayName</key>
 	<string>Northampton</string>
 	<key>CFBundleIdentifier</key>
-	<string>uk.gov.northampton.Northampton</string>
+	<string>uk.gov.northampton.northampton</string>
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
 	<key>UILaunchStoryboardName</key>
