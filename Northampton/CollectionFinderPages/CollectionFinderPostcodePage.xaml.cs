@@ -10,7 +10,6 @@ namespace Northampton
         public CollectionFinderPostcodePage()
         {
             InitializeComponent();
-            Analytics.TrackEvent("Started CollectionFinder");
         }
 
         void Entry_Completed(object sender, EventArgs e)
@@ -26,13 +25,13 @@ namespace Northampton
 
         private void ProcessPostcode(String postCode)
         {
-            Analytics.TrackEvent("CollectionFinder Checking Postcode", new Dictionary<string, string>
+            Analytics.TrackEvent("CollectionFinder - Started", new Dictionary<string, string>
             {
                 { "Postcode", postCode },
             });
             if (!Validators.IsValidPostcode(postCode))
             {
-                Analytics.TrackEvent("CollectionFinder Invalid Postcode", new Dictionary<string, string>
+                Analytics.TrackEvent("CollectionFinder - Invalid Postcode", new Dictionary<string, string>
                 {
                     { "Postcode", postCode },
                 });
@@ -41,7 +40,7 @@ namespace Northampton
             else
                if (!Validators.IsValidAreaPostcode(postCode))
             {
-                Analytics.TrackEvent("CollectionFinder Non Northampton Postcode", new Dictionary<string, string>
+                Analytics.TrackEvent("CollectionFinder - Non Northampton Postcode", new Dictionary<string, string>
                 {
                     { "Postcode", postCode },
                 });
@@ -52,6 +51,10 @@ namespace Northampton
                 if (postCode.Length == 6)
                 {
                     postCode = postCode.Substring(0, 3) + " " + postCode.Substring(3, 3);
+                    Analytics.TrackEvent("CollectionFinder - Trimmed Postcode", new Dictionary<string, string>
+                    {
+                        { "Postcode", postCode },
+                    });
                 }
                 Application.Current.Properties["WebServiceHandlerPageTitle"] = "Find your collection day";
                 Application.Current.Properties["WebServiceHandlerPageDescription"] = "Please wait whilst we find your collection details";
