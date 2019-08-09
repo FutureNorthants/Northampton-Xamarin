@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.AppCenter.Analytics;
 using Xamarin.Forms;
 
@@ -25,13 +26,25 @@ namespace Northampton
 
         private void ProcessPostcode(String postCode)
         {
+            Analytics.TrackEvent("CollectionFinder Checking Postcode", new Dictionary<string, string>
+            {
+                { "Postcode", postCode },
+            });
             if (!Validators.IsValidPostcode(postCode))
             {
+                Analytics.TrackEvent("CollectionFinder Invalid Postcode", new Dictionary<string, string>
+                {
+                    { "Postcode", postCode },
+                });
                 DisplayAlert("Invalid Postcode", "Please enter a valid UK postcode.", "OK");
             }
             else
                if (!Validators.IsValidAreaPostcode(postCode))
             {
+                Analytics.TrackEvent("CollectionFinder Non Northampton Postcode", new Dictionary<string, string>
+                {
+                    { "Postcode", postCode },
+                });
                 DisplayAlert("Postcode not in area", "Please enter a valid area postcode.", "OK");
             }
             else

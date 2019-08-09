@@ -17,7 +17,6 @@ namespace Northampton
         protected override void OnStart()
         {
             AppCenter.Start("ios=8919d112-f500-44e0-be67-a9e8d2bcb5f8;android=6d3cc324-63ea-48e4-a0ab-f434667c97be", typeof(Analytics), typeof(Crashes));
-            // Handle when your app starts
         }
 
         protected override void OnSleep()
