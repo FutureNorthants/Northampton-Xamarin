@@ -40,5 +40,11 @@
 	<string>Access to camera to take photos of issues</string>
 	<key>CFBundleShortVersionString</key>
 	<string>4.0</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>The app does not access or use any information from calendars</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>The app does not access or use any information from the photo library</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>The app does not use location other than when the user requests to report an issue using GPS</string>
 </dict>
 </plist>
