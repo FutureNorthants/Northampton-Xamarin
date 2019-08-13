@@ -98,7 +98,7 @@ namespace Northampton
 
                 if (connectivity == NetworkAccess.Internet)
                 {
-                    WebRequest streetRequest = WebRequest.Create(string.Format(@"https://veolia-test.northampton.digital/api/GetStreetByLatLng?lat={0}&lng={1}", currentLocation.Latitude, currentLocation.Longitude));
+                    WebRequest streetRequest = WebRequest.Create(string.Format(@"https://api.northampton.digital/vcc/getstreetbylatlng?lat={0}&lng={1}", currentLocation.Latitude, currentLocation.Longitude));
                     streetRequest.ContentType = "application/json";
                     streetRequest.Method = "GET";
 
@@ -168,7 +168,7 @@ namespace Northampton
             if (connectivity == NetworkAccess.Internet)
             {
                 Boolean noStreetsFound = false;
-                WebRequest streetRequest = WebRequest.Create(string.Format(@"https://veolia-test.northampton.digital/api/GetStreetByName?StreetName={0}", streetName));
+                WebRequest streetRequest = WebRequest.Create(string.Format(@"https://api.northampton.digital/vcc/getstreetbyname?StreetName={0}", streetName));
                 streetRequest.ContentType = "application/json";
                 streetRequest.Method = "GET";
 
@@ -313,11 +313,11 @@ namespace Northampton
                     client.DefaultRequestHeaders.Add("includesImage", "false");
                 }
 
-                client.BaseAddress = new Uri("https://mycouncil-test.northampton.digital");
+                client.BaseAddress = new Uri("https://api.northampton.digital/vcc/mycouncil");
 
                 try
                 {
-                    HttpResponseMessage response = await client.PostAsync("/CreateCall?", content);
+                    HttpResponseMessage response = await client.PostAsync("?", content);
                     String jsonResult = await response.Content.ReadAsStringAsync();
                     if (jsonResult.Contains("HTTP Status "))
                     {
@@ -343,10 +343,11 @@ namespace Northampton
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception error)
                 {
                     await Task.Delay(5000);
-                    await DisplayAlert("No Connectivity", "Your device does not currently have an internet connection, please try again later.", "OK");
+                    //await DisplayAlert("No Connectivity", "Your device does not currently have an internet connection, please try again later.", "OK");
+                    await DisplayAlert("No Connectivity", error.ToString(), "OK");
                     await Navigation.PopAsync();
                 }
             }
@@ -367,7 +368,7 @@ namespace Northampton
             {
                 JObject propertiesJSONobject = null;
                 Boolean noPostcodeFound = false;
-                WebRequest streetRequest = WebRequest.Create(string.Format(@"https://mycouncil.northampton.digital/BinRoundFinder?postcode={0}", postCode));
+                WebRequest streetRequest = WebRequest.Create(string.Format(@"https://api.northampton.digital/vcc/getbindetails?postcode={0}", postCode));
                 streetRequest.ContentType = "application/json";
                 streetRequest.Method = "GET";
 
