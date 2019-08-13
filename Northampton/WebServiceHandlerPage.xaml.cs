@@ -343,11 +343,10 @@ namespace Northampton
                         }
                     }
                 }
-                catch (Exception error)
+                catch (Exception)
                 {
                     await Task.Delay(5000);
-                    //await DisplayAlert("No Connectivity", "Your device does not currently have an internet connection, please try again later.", "OK");
-                    await DisplayAlert("No Connectivity", error.ToString(), "OK");
+                    await DisplayAlert("No Connectivity", "Your device does not currently have an internet connection, please try again later.", "OK");
                     await Navigation.PopAsync();
                 }
             }
