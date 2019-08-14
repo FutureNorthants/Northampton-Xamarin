@@ -7,8 +7,7 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Image x:Name="PhotoImage" />
-            <StackLayout Padding="10,0,10,0"> <Button x:Name="CameraButton" Text="Take Photo" Style="{StaticResource buttonStyle}" Grid.Row="1" /> </StackLayout>
-            
+            <StackLayout Padding="10,0,10,0"> <Button x:Name="CameraButton" Text="Take Photo" Style="{StaticResource buttonStyle}" Grid.Row="1" /> </StackLayout>         
         </Grid>
     </ContentPage.Content>
 </ContentPage>

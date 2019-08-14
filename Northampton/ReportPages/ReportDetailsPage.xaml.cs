@@ -48,8 +48,8 @@ namespace Northampton
                 var position = new Position(double.Parse(problemLat), double.Parse(problemLng));
                 ProblemMap.MoveToRegion(new MapSpan(position, 0.001, 0.001));
             }
-            storedProblems.Add(new Problem(0, "litter", "Litter"));
-            storedProblems.Add(new Problem(1, "flytip", "Flytipping"));
+            storedProblems.Add(new Problem(0, "Litter", "Litter"));
+            storedProblems.Add(new Problem(1, "Flytip", "Flytipping"));
             storedProblems.Add(new Problem(2, "bodily_fluids", "Bodily Fluids"));
             storedProblems.Add(new Problem(3, "broken_glass", "Broken Glass"));
             storedProblems.Add(new Problem(4, "dead_animal", "Dead Animal"));
@@ -62,7 +62,7 @@ namespace Northampton
             storedProblems.Add(new Problem(11, "gum_removal", "Gum Removal"));
             storedProblems.Add(new Problem(12, "leaf_clearance", "Leaf Clearance"));
             storedProblems.Add(new Problem(13, "overflowing_litter_bin", "Litter Bin Overflowing"));
-            storedProblems.Add(new Problem(14, "street_furniture_cleaning", "Street Sign Cleaning"));
+            storedProblems.Add(new Problem(14, "street_sign_clean", "Street Sign Cleaning"));
             storedProblems.Add(new Problem(15, "street_washing", "Street Washing"));
             storedProblems.Add(new Problem(16, "sweeper_bags_not_collected", "Sweeper Bags Not Collected"));
             storedProblems.Add(new Problem(17, "sweeping_required", "Sweeping Required"));

@@ -10,6 +10,20 @@ namespace Northampton
         public SettingsPhoneNumberPage(Boolean callingFromMenu)
         {
             this.callingFromMenu = callingFromMenu;
+            if (callingFromMenu)
+            {
+                ToolbarItems.Add(new ToolbarItem("Done", null, () =>
+                {
+                    EntryCompleted(null, null);
+                }));
+            }
+            else
+            {
+                ToolbarItems.Add(new ToolbarItem("Next", null, () =>
+                {
+                    EntryCompleted(null, null);
+                }));
+            }
             InitializeComponent();
         }
 
