@@ -48,7 +48,7 @@ namespace Northampton
                 var position = new Position(double.Parse(problemLat), double.Parse(problemLng));
                 ProblemMap.MoveToRegion(new MapSpan(position, 0.001, 0.001));
             }
-            
+            // Make sure the values here match up to values in CreteLaganCase.java in uk.gov.selfserve
             storedProblems.Add(new Problem(0, "Litter", "Litter"));
             storedProblems.Add(new Problem(1, "Flytip", "Flytipping"));
             storedProblems.Add(new Problem(2, "bodily_fluids", "Bodily Fluids"));

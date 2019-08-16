@@ -24,6 +24,7 @@ namespace Northampton
                     EntryCompleted(null, null);
                 }));
             }
+
             InitializeComponent();
         }
 

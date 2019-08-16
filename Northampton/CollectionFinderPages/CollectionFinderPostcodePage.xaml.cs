@@ -40,7 +40,7 @@ namespace Northampton
             else
                if (!Validators.IsValidAreaPostcode(postCode))
             {
-                Analytics.TrackEvent("CollectionFinder - Out of Area Postcode", new Dictionary<string, string>
+                Analytics.TrackEvent("CollectionFinder - Non Northampton Postcode", new Dictionary<string, string>
                 {
                     { "Postcode", postCode },
                 });
@@ -50,12 +50,10 @@ namespace Northampton
             {
                 if (postCode.Length == 6)
                 {
-                    String tempPostcode = postCode;
                     postCode = postCode.Substring(0, 3) + " " + postCode.Substring(3, 3);
                     Analytics.TrackEvent("CollectionFinder - Trimmed Postcode", new Dictionary<string, string>
                     {
-                        { "Before Postcode", tempPostcode },
-                        { "After Postcode", postCode },
+                        { "Postcode", postCode },
                     });
                 }
                 Application.Current.Properties["WebServiceHandlerPageTitle"] = "Find your collection day";

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using Microsoft.AppCenter.Analytics;
 using Xamarin.Forms;
 
 namespace Northampton
@@ -10,7 +8,7 @@ namespace Northampton
         String collectionDay = "";
         String collectionType = "";
 
-        public CollectionFinderResultPage(String postCode, String collectionDay, String collectionType)
+        public CollectionFinderResultPage(String collectionDay, String collectionType)
         {
             InitializeComponent();
             this.collectionDay = collectionDay;
@@ -26,13 +24,6 @@ namespace Northampton
                     this.collectionType = "Green Bags";
                     break;
                 default:
-                    Analytics.TrackEvent("CollectionFinder - Unexpected CollectionType", new Dictionary<string, string>
-                    {
-                        { "Postcode", postCode },
-                        { "CollectionDay", collectionDay },
-                        { "CollectionType", collectionType },
-                    });
-                    DisplayAlert("Error", "Sorry, there has been an enexpected response. This has been automatically reported to our Digital Service, please try again later.", "OK");
                     break;
             }
             BindingContext = this;
