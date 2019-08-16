@@ -11,6 +11,9 @@ using Plugin.Media.Abstractions;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using System.Text.Encodings.Web;
+using System.Collections.Generic;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 namespace Northampton
 {
@@ -98,7 +101,7 @@ namespace Northampton
 
                 if (connectivity == NetworkAccess.Internet)
                 {
-                    WebRequest streetRequest = WebRequest.Create(string.Format(@"https://veolia-test.northampton.digital/api/GetStreetByLatLng?lat={0}&lng={1}", currentLocation.Latitude, currentLocation.Longitude));
+                    WebRequest streetRequest = WebRequest.Create(string.Format(@"https://api.northampton.digital/vcc/getstreetbylatlng?lat={0}&lng={1}", currentLocation.Latitude, currentLocation.Longitude));
                     streetRequest.ContentType = "application/json";
                     streetRequest.Method = "GET";
 
@@ -168,7 +171,7 @@ namespace Northampton
             if (connectivity == NetworkAccess.Internet)
             {
                 Boolean noStreetsFound = false;
-                WebRequest streetRequest = WebRequest.Create(string.Format(@"https://veolia-test.northampton.digital/api/GetStreetByName?StreetName={0}", streetName));
+                WebRequest streetRequest = WebRequest.Create(string.Format(@"https://api.northampton.digital/vcc/getstreetbyname?StreetName={0}", streetName));
                 streetRequest.ContentType = "application/json";
                 streetRequest.Method = "GET";
 
@@ -302,10 +305,6 @@ namespace Northampton
                 {
                     client.DefaultRequestHeaders.Add("includesImage", "true");
                     MediaFile imageData = Application.Current.Properties["ProblemImage"] as MediaFile;
-                    Stream imageStream = imageData.GetStream();
-                    var bytes = new byte[imageStream.Length];
-                    await imageStream.ReadAsync(bytes, 0, (int)imageStream.Length);
-                    string imageBase64 = Convert.ToBase64String(bytes);
                     content = new StreamContent(imageData.GetStream());
                 }
                 else
@@ -313,11 +312,11 @@ namespace Northampton
                     client.DefaultRequestHeaders.Add("includesImage", "false");
                 }
 
-                client.BaseAddress = new Uri("https://mycouncil-test.northampton.digital");
+                client.BaseAddress = new Uri("https://api.northampton.digital/vcc-test/mycouncil/CreateCall");
 
                 try
                 {
-                    HttpResponseMessage response = await client.PostAsync("/CreateCall?", content);
+                    HttpResponseMessage response = await client.PostAsync("?", content);
                     String jsonResult = await response.Content.ReadAsStringAsync();
                     if (jsonResult.Contains("HTTP Status "))
                     {
@@ -367,7 +366,7 @@ namespace Northampton
             {
                 JObject propertiesJSONobject = null;
                 Boolean noPostcodeFound = false;
-                WebRequest streetRequest = WebRequest.Create(string.Format(@"https://mycouncil.northampton.digital/BinRoundFinder?postcode={0}", postCode));
+                WebRequest streetRequest = WebRequest.Create(string.Format(@"https://api.northampton.digital/vcc/getbindetails?postcode={0}", postCode));
                 streetRequest.ContentType = "application/json";
                 streetRequest.Method = "GET";
 
@@ -376,36 +375,68 @@ namespace Northampton
                     using (HttpWebResponse response = streetRequest.GetResponse() as HttpWebResponse)
                     {
                         if (response.StatusCode != HttpStatusCode.OK)
-                            Console.Out.WriteLine("Error fetching data. Server returned status code: {0}", response.StatusCode);
-                        using (StreamReader reader = new StreamReader(response.GetResponseStream()))
                         {
-                            var content = reader.ReadToEnd();
-                            if (string.IsNullOrWhiteSpace(content))
+                            Analytics.TrackEvent("CollectionFinder - Server Error", new Dictionary<string, string>
                             {
-                                Console.Out.WriteLine("Response contained empty body...");
+                               { "Postcode", postCode },
+                               { "StatusCode", response.StatusCode.ToString() },
+                            });
+                            await Task.Delay(5000);
+                            if (Navigation.NavigationStack.Count > 1)
+                            {
+                                Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
                             }
-                            else
+                            await DisplayAlert("Error", "Sorry, there has been a system error (" + response.StatusCode + "). This has been automatically reported to our Digital Service, please try again later.", "OK");
+                            await Navigation.PopAsync();
+                        }
+                        else
+                        {
+                            using (StreamReader reader = new StreamReader(response.GetResponseStream()))
                             {
-                                Console.Out.WriteLine("Response Body: \r\n {0}", content);
-                                Application.Current.Properties["JsonProperties"] = content;
-                                await Application.Current.SavePropertiesAsync();
-                                propertiesJSONobject = JObject.Parse(content);
-                                String temp = (string)propertiesJSONobject.SelectToken("rounds");
-                                if (!((string)propertiesJSONobject.SelectToken("result")).Equals("success"))
+                                var content = reader.ReadToEnd();
+                                if (string.IsNullOrWhiteSpace(content))
                                 {
-                                    noPostcodeFound = true;
+                                    Analytics.TrackEvent("CollectionFinder - Server Response Empty", new Dictionary<string, string>
+                                    {
+                                      { "Postcode", postCode }
+                                    });
+                                    await Task.Delay(5000);
+                                    if (Navigation.NavigationStack.Count > 1)
+                                    {
+                                        Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
+                                    }
+                                    await DisplayAlert("Error", "Sorry, there has been a system issue. This has been automatically reported to our Digital Service, please try again later.", "OK");
+                                    await Navigation.PopAsync();
+                                }
+                                else
+                                {                                    
+                                    Application.Current.Properties["JsonProperties"] = content;
+                                    await Application.Current.SavePropertiesAsync();
+                                    propertiesJSONobject = JObject.Parse(content);
+                                    String temp = (string)propertiesJSONobject.SelectToken("rounds");
+                                    if (!((string)propertiesJSONobject.SelectToken("result")).Equals("success"))
+                                    {
+                                        noPostcodeFound = true;
+                                    }
                                 }
                             }
-                        }
+                        }    
                     }
                 }
                 catch (Exception error)
                 {
-                    await DisplayAlert("Error", error.ToString(), "OK");
+                    Crashes.TrackError(error, new Dictionary<string, string>{
+                        { "Postcode", postCode }
+                    });
+                    await DisplayAlert("Error", "Sorry, there has been a system crash. This has been automatically reported to our Digital Service, please try again later.", "OK");
                     await Navigation.PopAsync();
                 }
                 if (noPostcodeFound)
                 {
+                    Analytics.TrackEvent("CollectionFinder - No details found", new Dictionary<string, string>
+                    {
+                        { "Postcode", postCode }
+                    });
                     await DisplayAlert("Missing Information", "No collection details found for postcode '" + postCode + "', please check postcode and try again", "OK");
                     await Navigation.PopAsync();
                 }
@@ -414,13 +445,17 @@ namespace Northampton
                     switch ((string)propertiesJSONobject.SelectToken("rounds"))
                     {
                         case "single":
-                            await Navigation.PushAsync(new CollectionFinderResultPage((String)propertiesJSONobject.SelectToken("day"), (String)propertiesJSONobject.SelectToken("type")));                        
+                            await Navigation.PushAsync(new CollectionFinderResultPage(postCode,(String)propertiesJSONobject.SelectToken("day"), (String)propertiesJSONobject.SelectToken("type")));                        
                             break;
                         case "multiple":
-                            await Navigation.PushAsync(new CollectionFinderPropertyPage());                           
+                            await Navigation.PushAsync(new CollectionFinderPropertyPage(postCode));                           
                             break;
                         default:
-                            await DisplayAlert("Error", "Unable to find collection information", "OK");
+                            Analytics.TrackEvent("CollectionFinder - Unexpected Round", new Dictionary<string, string>
+                            {
+                                { "Postcode", postCode }
+                            });
+                            await DisplayAlert("Error", "Sorry, there has been an enexpected response. This has been automatically reported to our Digital Service, please try again later.", "OK");
                             await Navigation.PopAsync();
                             break;
                     }
@@ -432,6 +467,10 @@ namespace Northampton
             }
             else
             {
+                Analytics.TrackEvent("CollectionFinder - No Internet", new Dictionary<string, string>
+                {
+                    { "Postcode", postCode },
+                });
                 await Task.Delay(5000);
                 if (Navigation.NavigationStack.Count > 1)
                 {
