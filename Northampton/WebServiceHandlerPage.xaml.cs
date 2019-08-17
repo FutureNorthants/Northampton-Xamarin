@@ -127,7 +127,6 @@ namespace Northampton
                             }
                             await DisplayAlert("Error", "Sorry, there has been a system error (" + response.StatusCode + "). This has been reported to our Digital Service, please try again later.", "OK");
                             await Navigation.PopAsync();
-                            Console.Out.WriteLine("Error fetching data. Server returned status code: {0}", response.StatusCode);
                         }
 
                         using (StreamReader reader = new StreamReader(response.GetResponseStream()))
@@ -158,7 +157,7 @@ namespace Northampton
                     }
                     if (noStreetsFound)
                     {
-                        Analytics.TrackEvent("ReportIt - No Streets Found", new Dictionary<string, string>
+                        Analytics.TrackEvent("ReportIt - No Streets Found By GPS", new Dictionary<string, string>
                         {
                             { "Latitude", currentLocation.Latitude.ToString() },
                             { "Longitude", currentLocation.Longitude.ToString() },
@@ -219,17 +218,34 @@ namespace Northampton
                     using (HttpWebResponse response = streetRequest.GetResponse() as HttpWebResponse)
                     {
                         if (response.StatusCode != HttpStatusCode.OK)
-                            Console.Out.WriteLine("Error fetching data. Server returned status code: {0}", response.StatusCode);
+                        {
+                            Analytics.TrackEvent("ReportIt - Server Error from GetStreetByStreetName", new Dictionary<string, string>
+                            {
+                               { "StreetName", streetName },
+                               { "StatusCode", response.StatusCode.ToString() },
+                            });
+                            await Task.Delay(5000);
+                            if (Navigation.NavigationStack.Count > 1)
+                            {
+                                Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
+                            }
+                            await DisplayAlert("Error", "Sorry, there has been a system error (" + response.StatusCode + "). This has been reported to our Digital Service, please try again later.", "OK");
+                            await Navigation.PopAsync();
+                        }
                         using (StreamReader reader = new StreamReader(response.GetResponseStream()))
                         {
                             var content = reader.ReadToEnd();
                             if (string.IsNullOrWhiteSpace(content))
                             {
-                                Console.Out.WriteLine("Response contained empty body...");
+                                Analytics.TrackEvent("ReportIt - Server Response Empty from GetStreetByStreetName", new Dictionary<string, string>
+                                {
+                                    { "StreetName", streetName },
+                                });
+                                await DisplayAlert("Error", "Sorry, there has been a system issue. This has been reported to our Digital Service, please try again later.", "OK");
+                                await Navigation.PopAsync();
                             }
                             else
                             {
-                                Console.Out.WriteLine("Response Body: \r\n {0}", content);
                                 Application.Current.Properties["JsonStreets"] = content;
                                 await Application.Current.SavePropertiesAsync();
                                 JObject streetsJSONobject = JObject.Parse(content);
@@ -244,11 +260,19 @@ namespace Northampton
                 }
                 catch (Exception error)
                 {
-                    await DisplayAlert("Error", error.ToString(), "OK");
+                    Crashes.TrackError(error, new Dictionary<string, string>
+                        {
+                            { "StreetName", streetName },
+                        });
+                    await DisplayAlert("Error", "Sorry, there has been a system crash. This has been reported to our Digital Service, please try again later.", "OK");
                     await Navigation.PopAsync();
                 }
                 if (noStreetsFound)
                 {
+                    Analytics.TrackEvent("ReportIt - No Streets Found With Name", new Dictionary<string, string>
+                        {
+                            { "StreetName", streetName },
+                        });
                     await DisplayAlert("Missing Information", "No streets found with the name '" + streetName + "', please try again", "OK");
                     await Navigation.PopAsync();
                 }
@@ -263,6 +287,12 @@ namespace Northampton
             }
             else
             {
+                Analytics.TrackEvent("No Internet", new Dictionary<string, string>
+                    {
+                        { "Function", "ReportIt" },
+                        { "Method", "GetLocationByStreet" },
+                        { "StreetName", streetName },
+                    });
                 await Task.Delay(5000);
                 if (Navigation.NavigationStack.Count > 1)
                 {
