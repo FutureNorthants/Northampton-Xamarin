@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Microsoft.AppCenter.Analytics;
 using Xamarin.Forms;
 
 namespace Northampton
@@ -8,7 +10,7 @@ namespace Northampton
         String collectionDay = "";
         String collectionType = "";
 
-        public CollectionFinderResultPage(String collectionDay, String collectionType)
+        public CollectionFinderResultPage(String postCode, String collectionDay, String collectionType)
         {
             InitializeComponent();
             this.collectionDay = collectionDay;
