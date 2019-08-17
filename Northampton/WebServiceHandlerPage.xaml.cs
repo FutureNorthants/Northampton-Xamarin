@@ -92,9 +92,12 @@ namespace Northampton
                 var locationRequest = new GeolocationRequest(GeolocationAccuracy.Best, TimeSpan.FromSeconds(20));
                 currentLocation = await Geolocation.GetLocationAsync(locationRequest, cancelToken);
 
-                if (currentLocation != null)
+                if (currentLocation == null)
                 {
-                    Console.WriteLine($"Latitude: {currentLocation.Latitude}, Longitude: {currentLocation.Longitude}, Altitude: {currentLocation.Altitude}");
+                    Analytics.TrackEvent("ReportIt - Location Not Found", new Dictionary<string, string>{});
+                }
+                else
+                {
                     Application.Current.Properties["ProblemLat"] = currentLocation.Latitude.ToString();
                     Application.Current.Properties["ProblemLng"] = currentLocation.Longitude.ToString();
                     await Application.Current.SavePropertiesAsync();
@@ -110,17 +113,38 @@ namespace Northampton
                     using (HttpWebResponse response = streetRequest.GetResponse() as HttpWebResponse)
                     {
                         if (response.StatusCode != HttpStatusCode.OK)
+                        {
+                            Analytics.TrackEvent("ReportIt - Server Error from GetStreetByLatLng", new Dictionary<string, string>
+                            {
+                               { "Latitude", currentLocation.Latitude.ToString() },
+                               { "Longitude", currentLocation.Longitude.ToString() },
+                               { "StatusCode", response.StatusCode.ToString() },
+                            });
+                            await Task.Delay(5000);
+                            if (Navigation.NavigationStack.Count > 1)
+                            {
+                                Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
+                            }
+                            await DisplayAlert("Error", "Sorry, there has been a system error (" + response.StatusCode + "). This has been reported to our Digital Service, please try again later.", "OK");
+                            await Navigation.PopAsync();
                             Console.Out.WriteLine("Error fetching data. Server returned status code: {0}", response.StatusCode);
+                        }
+
                         using (StreamReader reader = new StreamReader(response.GetResponseStream()))
                         {
                             var content = reader.ReadToEnd();
                             if (string.IsNullOrWhiteSpace(content))
                             {
-                                Console.Out.WriteLine("Response contained empty body...");
+                                Analytics.TrackEvent("ReportIt - Server Response Empty from GetStreetByLatLng", new Dictionary<string, string>
+                                {
+                                    { "Latitude", currentLocation.Latitude.ToString() },
+                                    { "Longitude", currentLocation.Longitude.ToString() },
+                                });
+                                await DisplayAlert("Error", "Sorry, there has been a system issue. This has been reported to our Digital Service, please try again later.", "OK");
+                                await Navigation.PopAsync();
                             }
                             else
                             {
-                                Console.Out.WriteLine("Response Body: \r\n {0}", content);
                                 Application.Current.Properties["JsonStreets"] = content;
                                 await Application.Current.SavePropertiesAsync();
                                 JObject streetsJSONobject = JObject.Parse(content);
@@ -134,13 +158,17 @@ namespace Northampton
                     }
                     if (noStreetsFound)
                     {
+                        Analytics.TrackEvent("ReportIt - No Streets Found", new Dictionary<string, string>
+                        {
+                            { "Latitude", currentLocation.Latitude.ToString() },
+                            { "Longitude", currentLocation.Longitude.ToString() },
+                        });
                         await DisplayAlert("Missing Information", "No streets found at this location, please try again", "OK");
                         await Navigation.PopAsync();
                     }
                     else
                     {
                         await Navigation.PushAsync(new ReportDetailsPage(true));
-
                         if (Navigation.NavigationStack.Count > 1)
                         {
                             Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
@@ -149,12 +177,21 @@ namespace Northampton
                 }
                 else
                 {
+                    Analytics.TrackEvent("No Internet", new Dictionary<string, string>
+                    {
+                        { "Function", "ReportIt" },
+                        { "Method", "GetLocationByGPS" },
+                        { "Latitude", currentLocation.Latitude.ToString() },
+                        { "Longitude", currentLocation.Longitude.ToString() },
+
+                    });
                     await DisplayAlert("No Connectivity", "Your device does not currently have an internet connection, please try again later.", "OK");
                     await Navigation.PopAsync();
                 }
             }
-            catch (Exception)
+            catch (Exception error)
             {
+                Crashes.TrackError(error, new Dictionary<string, string>{});
                 Application.Current.Properties["ProblemLat"] = "";
                 Application.Current.Properties["ProblemLng"] = "";
                 Application.Current.Properties["UsedLatLng"] = "false";
@@ -406,8 +443,10 @@ namespace Northampton
             }
             else
             {
-                Analytics.TrackEvent("ReportIt - No internet", new Dictionary<string, string>
-                {                
+                Analytics.TrackEvent("No internet", new Dictionary<string, string>
+                {
+                    { "Function", "ReportIt" },
+                    { "Method", "SendProblemToCRM" },
                     { "DeviceID", DeviceInfo.Platform.ToString() },
                     { "ProblemNumber", problemType },
                     { "ProblemLatitude", problemLat },
@@ -537,10 +576,12 @@ namespace Northampton
             }
             else
             {
-                Analytics.TrackEvent("CollectionFinder - No Internet", new Dictionary<string, string>
-                {
-                    { "Postcode", postCode },
-                });
+                Analytics.TrackEvent("No Internet", new Dictionary<string, string>
+                    {
+                        { "Function", "CollectionFinder" },
+                        { "Method", "GetCollectionDetails" },
+                        { "Postcode", postCode },
+                    });
                 await Task.Delay(5000);
                 if (Navigation.NavigationStack.Count > 1)
                 {
