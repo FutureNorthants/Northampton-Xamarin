@@ -12,9 +12,9 @@ namespace Northampton
         {
             InitializeComponent();
             this.SetValue(BarBackgroundColorProperty, "Color.Black");
-            On<Android>().SetToolbarPlacement(ToolbarPlacement.Bottom)
-             .SetBarItemColor(Color.Gray)
-             .SetBarSelectedItemColor(Color.White);
+            On<Android>().SetToolbarPlacement(ToolbarPlacement.Bottom);
+            On<Android>().SetBarItemColor(Color.Gray);
+            On<Android>().SetBarSelectedItemColor(Color.White);
         }
     }
 }

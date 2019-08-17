@@ -125,7 +125,7 @@ namespace Northampton
         {
             MediaFile photo = await Plugin.Media.CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
             {
-                PhotoSize = PhotoSize.Medium,
+                PhotoSize = PhotoSize.Medium
             });
 
             if (photo != null)
@@ -134,11 +134,7 @@ namespace Northampton
                 includesImage = true;
                 PhotoButton.IsVisible = false;
                 PhotoImage.Source = ImageSource.FromStream(() => { return photo.GetStream(); });
-                Stream imageString = photo.GetStream();
-                String tempStr = photo.ToString();
                 PhotoImage.IsVisible = true;
-                Application.Current.Properties["ProblemImage"] = photo.ToString();
-                await Application.Current.SavePropertiesAsync();
             await ScrollView.ScrollToAsync(submitButton, ScrollToPosition.MakeVisible, true);
             }
         }
@@ -152,6 +148,10 @@ namespace Northampton
             else if (typePickerIndex == -1)
             {
                 await DisplayAlert("Missing Information", "Please confirm the type of problem", "OK");
+            }
+            else if (problemDescription.Length == 0)
+            {
+                await DisplayAlert("Missing Information", "Please provide as many details as possible, it helps us to fix the problem first time", "OK");
             }
             else if (updatesPickerIndex == -1)
             {

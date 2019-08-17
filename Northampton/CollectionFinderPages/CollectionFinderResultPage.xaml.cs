@@ -14,6 +14,7 @@ namespace Northampton
         {
             InitializeComponent();
             this.collectionDay = collectionDay;
+            Boolean collectionFound = true;
             switch (collectionType)
             {
                 case "black":
@@ -26,6 +27,7 @@ namespace Northampton
                     this.collectionType = "Green Bags";
                     break;
                 default:
+                    collectionFound = false;
                     Analytics.TrackEvent("CollectionFinder - Unexpected CollectionType", new Dictionary<string, string>
                     {
                         { "Postcode", postCode },
@@ -34,6 +36,13 @@ namespace Northampton
                     });
                     DisplayAlert("Error", "Sorry, there has been an enexpected response. This has been automatically reported to our Digital Service, please try again later.", "OK");
                     break;
+            }
+            if (collectionFound)
+            {
+                Analytics.TrackEvent("CollectionFinder - Completed", new Dictionary<string, string>
+                    {
+                        { "Postcode", postCode }
+                    });
             }
             BindingContext = this;
         }

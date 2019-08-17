@@ -14,6 +14,7 @@ using System.Text.Encodings.Web;
 using System.Collections.Generic;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using System.Net.Http.Headers;
 
 namespace Northampton
 {
@@ -288,6 +289,7 @@ namespace Northampton
             {
                 HttpClient client = new HttpClient();
 
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
                 client.DefaultRequestHeaders.Add("dataSource", "xamarin");
                 client.DefaultRequestHeaders.Add("DeviceID", DeviceInfo.Platform.ToString());
                 client.DefaultRequestHeaders.Add("ProblemNumber", problemType);
@@ -306,51 +308,119 @@ namespace Northampton
                     client.DefaultRequestHeaders.Add("includesImage", "true");
                     MediaFile imageData = Application.Current.Properties["ProblemImage"] as MediaFile;
                     content = new StreamContent(imageData.GetStream());
+                    content.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
                 }
                 else
                 {
                     client.DefaultRequestHeaders.Add("includesImage", "false");
                 }
 
-                client.BaseAddress = new Uri("https://api.northampton.digital/vcc-test/mycouncil/CreateCall");
+                //client.BaseAddress = new Uri("https://mycouncil-test.northampton.digital/CreateCall");
+                client.BaseAddress = new Uri("https://api.northampton.digital/vcc-test/mycouncil");
 
                 try
                 {
-                    HttpResponseMessage response = await client.PostAsync("?", content);
+                    HttpResponseMessage response = await client.PostAsync("", content);
                     String jsonResult = await response.Content.ReadAsStringAsync();
                     if (jsonResult.Contains("HTTP Status "))
                     {
                         int errorIndex = jsonResult.IndexOf("HTTP Status ", StringComparison.Ordinal);
-                        await DisplayAlert("Error", "Error " + jsonResult.Substring(errorIndex + 12, 3) + " from server, please try again later", "OK");
+                        Analytics.TrackEvent("ReportIt - Unable to Submit", new Dictionary<string, string>
+                            {
+                                { "HTTP Status Code", jsonResult.Substring(errorIndex + 12, 3) },
+                                { "DeviceID", DeviceInfo.Platform.ToString() },
+                                { "ProblemNumber", problemType },
+                                { "ProblemLatitude", problemLat },
+                                { "ProblemLongitude", problemLng },
+                                { "ProblemDescription", JavaScriptEncoder.Default.Encode(Application.Current.Properties["ProblemDescription"] as String) },
+                                { "ProblemLocation", Application.Current.Properties["ProblemLocation"] as String },
+                                { "ProblemStreet", Application.Current.Properties["ProblemUSRN"] as String },
+                                { "ProblemEmail", problemEmail },
+                                { "ProblemPhone", problemText },
+                                { "ProblemName", Application.Current.Properties["SettingsName"] as String },
+                                { "ProblemUsedGPS", Application.Current.Properties["UsedLatLng"] as String },
+                                { "ProblemUsedImage", Application.Current.Properties["ProblemUsedImage"] as String },
+                            });
+                        await DisplayAlert("Error", "Sorry, there has been an enexpected response (" + jsonResult.Substring(errorIndex + 12, 3) + "). This has been reported to our Digital Service, please try again later.", "OK");
                         await Navigation.PopAsync();
                     }
                     else
                     {
                         JObject crmJSONobject = JObject.Parse(jsonResult);
-                        if (((string)crmJSONobject.SelectToken("result")).Equals("success"))
+                        try
                         {
-                            await Navigation.PushAsync(new ReportResultPage((string)crmJSONobject.SelectToken("callNumber"), (string)crmJSONobject.SelectToken("slaDate")));
-                            if (Navigation.NavigationStack.Count > 1)
+                            if (((string)crmJSONobject.SelectToken("result")).Equals("success"))
                             {
-                                Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
+                                await Navigation.PushAsync(new ReportResultPage((string)crmJSONobject.SelectToken("callNumber"), (string)crmJSONobject.SelectToken("slaDate")));
+                                if (Navigation.NavigationStack.Count > 1)
+                                {
+                                    Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
+                                }
                             }
                         }
-                        else
+                        catch (Exception error)
                         {
-                            await DisplayAlert("Error", "No response from server, please try again later", "OK");
+                            Crashes.TrackError(error, new Dictionary<string, string>
+                            {
+                                { "Issue", "ReportIt - Unsuccessful Submit"},
+                                { "Message", ((string)crmJSONobject.SelectToken("message"))},
+                                { "DeviceID", DeviceInfo.Platform.ToString()},
+                                { "ProblemNumber", problemType },
+                                { "ProblemLatitude", problemLat },
+                                { "ProblemLongitude", problemLng },
+                                { "ProblemDescription", JavaScriptEncoder.Default.Encode(Application.Current.Properties["ProblemDescription"] as String) },
+                                { "ProblemLocation", Application.Current.Properties["ProblemLocation"] as String },
+                                { "ProblemStreet", Application.Current.Properties["ProblemUSRN"] as String },
+                                { "ProblemEmail", problemEmail },
+                                { "ProblemPhone", problemText },
+                                { "ProblemName", Application.Current.Properties["SettingsName"] as String },
+                                { "ProblemUsedGPS", Application.Current.Properties["UsedLatLng"] as String },
+                                { "ProblemUsedImage", Application.Current.Properties["ProblemUsedImage"] as String },
+                            });
+                            await DisplayAlert("Error", "Sorry, there has been a system issue. This has been reported to our Digital Service, please try again later.", "OK");
                             await Navigation.PopAsync();
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception error)
                 {
+                Crashes.TrackError(error, new Dictionary<string, string>
+                {              
+                    { "DeviceID", DeviceInfo.Platform.ToString() },
+                    { "ProblemNumber", problemType },
+                    { "ProblemLatitude", problemLat },
+                    { "ProblemLongitude", problemLng },
+                    { "ProblemDescription", JavaScriptEncoder.Default.Encode(Application.Current.Properties["ProblemDescription"] as String) },
+                    { "ProblemLocation", Application.Current.Properties["ProblemLocation"] as String },
+                    { "ProblemStreet", Application.Current.Properties["ProblemUSRN"] as String },
+                    { "ProblemEmail", problemEmail },
+                    { "ProblemPhone", problemText },
+                    { "ProblemName", Application.Current.Properties["SettingsName"] as String },
+                    { "ProblemUsedGPS", Application.Current.Properties["UsedLatLng"] as String },
+                    { "ProblemUsedImage", Application.Current.Properties["ProblemUsedImage"] as String },
+                });
                     await Task.Delay(5000);
-                    await DisplayAlert("No Connectivity", "Your device does not currently have an internet connection, please try again later.", "OK");
+                    await DisplayAlert("Error", "Sorry, there has been a system crash. This has been reported to our Digital Service, please try again later.", "OK");
                     await Navigation.PopAsync();
                 }
             }
             else
             {
+                Analytics.TrackEvent("ReportIt - No internet", new Dictionary<string, string>
+                {                
+                    { "DeviceID", DeviceInfo.Platform.ToString() },
+                    { "ProblemNumber", problemType },
+                    { "ProblemLatitude", problemLat },
+                    { "ProblemLongitude", problemLng },
+                    { "ProblemDescription", JavaScriptEncoder.Default.Encode(Application.Current.Properties["ProblemDescription"] as String) },
+                    { "ProblemLocation", Application.Current.Properties["ProblemLocation"] as String },
+                    { "ProblemStreet", Application.Current.Properties["ProblemUSRN"] as String },
+                    { "ProblemEmail", problemEmail },
+                    { "ProblemPhone", problemText },
+                    { "ProblemName", Application.Current.Properties["SettingsName"] as String },
+                    { "ProblemUsedGPS", Application.Current.Properties["UsedLatLng"] as String },
+                    { "ProblemUsedImage", Application.Current.Properties["ProblemUsedImage"] as String },
+                });
                 await Task.Delay(5000);
                 await DisplayAlert("No Connectivity", "Your device does not currently have an internet connection, please try again later.", "OK");
                 await Navigation.PopAsync();
@@ -386,7 +456,7 @@ namespace Northampton
                             {
                                 Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
                             }
-                            await DisplayAlert("Error", "Sorry, there has been a system error (" + response.StatusCode + "). This has been automatically reported to our Digital Service, please try again later.", "OK");
+                            await DisplayAlert("Error", "Sorry, there has been a system error (" + response.StatusCode + "). This has been reported to our Digital Service, please try again later.", "OK");
                             await Navigation.PopAsync();
                         }
                         else
@@ -405,7 +475,7 @@ namespace Northampton
                                     {
                                         Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
                                     }
-                                    await DisplayAlert("Error", "Sorry, there has been a system issue. This has been automatically reported to our Digital Service, please try again later.", "OK");
+                                    await DisplayAlert("Error", "Sorry, there has been a system issue. This has been reported to our Digital Service, please try again later.", "OK");
                                     await Navigation.PopAsync();
                                 }
                                 else
@@ -428,7 +498,7 @@ namespace Northampton
                     Crashes.TrackError(error, new Dictionary<string, string>{
                         { "Postcode", postCode }
                     });
-                    await DisplayAlert("Error", "Sorry, there has been a system crash. This has been automatically reported to our Digital Service, please try again later.", "OK");
+                    await DisplayAlert("Error", "Sorry, there has been a system crash. This has been reported to our Digital Service, please try again later.", "OK");
                     await Navigation.PopAsync();
                 }
                 if (noPostcodeFound)
@@ -455,7 +525,7 @@ namespace Northampton
                             {
                                 { "Postcode", postCode }
                             });
-                            await DisplayAlert("Error", "Sorry, there has been an enexpected response. This has been automatically reported to our Digital Service, please try again later.", "OK");
+                            await DisplayAlert("Error", "Sorry, there has been an enexpected response. This has been reported to our Digital Service, please try again later.", "OK");
                             await Navigation.PopAsync();
                             break;
                     }
