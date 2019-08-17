@@ -4,8 +4,6 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Plugin.Media.Abstractions;
 using Xamarin.Essentials;
@@ -59,7 +57,10 @@ namespace Northampton
                     GetCollectionDetails(Application.Current.Properties["CollectionFinderPostcode"] as String);
                     break;
                 default:
-                    Console.WriteLine("Error4 - callingPage not found");
+                    Analytics.TrackEvent("WebServiceHandler - Unexpected CallingPage", new Dictionary<string, string>
+                    {
+                        { "CallingPage", callingPage }
+                    });
                     break;
             }
         }
@@ -261,24 +262,24 @@ namespace Northampton
                 switch (problemUpdates)
                 {
                     case "email":
-                        //Email
                         if (Application.Current.Properties.ContainsKey("SettingsEmail"))
                         {
                             problemEmail = Application.Current.Properties["SettingsEmail"] as String;
                         }
                         break;
                     case "text":
-                        //Text
                         if (Application.Current.Properties.ContainsKey("SettingsPhoneNumber"))
                         {
                             problemText = Application.Current.Properties["SettingsPhoneNumber"] as String;
                         }
                         break;
-                    case "none":
-                        //No Updates;
+                    case "none":                
                         break;
                     default:
-                        Console.WriteLine("Updates setting not found");
+                        Analytics.TrackEvent("ReportIt - Unexpected ProblemUpdates", new Dictionary<string, string>
+                            {
+                                { "ProblemUpdates", problemUpdates }
+                            });
                         break;
                 }
             }
@@ -315,7 +316,6 @@ namespace Northampton
                     client.DefaultRequestHeaders.Add("includesImage", "false");
                 }
 
-                //client.BaseAddress = new Uri("https://mycouncil-test.northampton.digital/CreateCall");
                 client.BaseAddress = new Uri("https://api.northampton.digital/vcc-test/mycouncil");
 
                 try
@@ -427,7 +427,7 @@ namespace Northampton
             }
         }
 
-        async void GetCollectionDetails(String postCode)
+        private async void GetCollectionDetails(String postCode)
         {
             await Task.Delay(1000);
             NetworkAccess connectivity = Connectivity.NetworkAccess;
