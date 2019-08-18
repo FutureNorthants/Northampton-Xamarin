@@ -18,12 +18,15 @@ namespace Northampton
             switch (collectionType)
             {
                 case "black":
+                    Analytics.TrackEvent("CollectionFinder - Successful");
                     this.collectionType = "Black Wheelie Bin";
                     break;
                 case "brown":
+                    Analytics.TrackEvent("CollectionFinder - Successful");
                     this.collectionType = "Brown Wheelie Bin";
                     break;
                 case "bags":
+                    Analytics.TrackEvent("CollectionFinder - Successful");
                     this.collectionType = "Green Bags";
                     break;
                 default:
