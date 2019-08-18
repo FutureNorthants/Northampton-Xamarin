@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AppCenter.Analytics;
 using Newtonsoft.Json.Linq;
 using Plugin.Media.Abstractions;
@@ -135,7 +136,8 @@ namespace Northampton
                 PhotoButton.IsVisible = false;
                 PhotoImage.Source = ImageSource.FromStream(() => { return photo.GetStream(); });
                 PhotoImage.IsVisible = true;
-            await ScrollView.ScrollToAsync(submitButton, ScrollToPosition.MakeVisible, true);
+                await Task.Delay(500);
+                await ScrollView.ScrollToAsync(submitButton, ScrollToPosition.MakeVisible, true);
             }
         }
 
