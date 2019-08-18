@@ -83,6 +83,7 @@ namespace Northampton
 
         async void GetLocationByGPS()
         {
+            Analytics.TrackEvent("ReportIt - GetLocationByGPS Attempted");
             Xamarin.Essentials.Location currentLocation = null;
             Boolean noStreetsFound = false;
             try
@@ -167,6 +168,7 @@ namespace Northampton
                     }
                     else
                     {
+                        Analytics.TrackEvent("ReportIt - GetLocationByGPS Successful");
                         await Navigation.PushAsync(new ReportDetailsPage(true));
                         if (Navigation.NavigationStack.Count > 1)
                         {
@@ -203,6 +205,7 @@ namespace Northampton
 
         async void GetLocationByStreet(String streetName)
         {
+            Analytics.TrackEvent("ReportIt - GetLocationByStreet Attempted");
             await Task.Delay(1000);
             NetworkAccess connectivity = Connectivity.NetworkAccess;
 
@@ -278,6 +281,7 @@ namespace Northampton
                 }
                 else
                 {
+                    Analytics.TrackEvent("ReportIt - GetLocationByStreet Successful");
                     await Navigation.PushAsync(new ReportDetailsPage(false));
                     if (Navigation.NavigationStack.Count > 1)
                     {
@@ -305,6 +309,7 @@ namespace Northampton
 
         async void SendProblemToCRM()
         {
+            Analytics.TrackEvent("ReportIt - SendProblemToCRM Attempted");
             String problemType = "";
             String problemLat = "";
             String problemLng = "";
@@ -418,6 +423,7 @@ namespace Northampton
                         {
                             if (((string)crmJSONobject.SelectToken("result")).Equals("success"))
                             {
+                                Analytics.TrackEvent("ReportIt - SendProblemToCRM Successful");
                                 await Navigation.PushAsync(new ReportResultPage((string)crmJSONobject.SelectToken("callNumber"), (string)crmJSONobject.SelectToken("slaDate")));
                                 if (Navigation.NavigationStack.Count > 1)
                                 {
@@ -498,6 +504,7 @@ namespace Northampton
 
         private async void GetCollectionDetails(String postCode)
         {
+            Analytics.TrackEvent("CollectionFinder - Submission Attempted");
             await Task.Delay(1000);
             NetworkAccess connectivity = Connectivity.NetworkAccess;
 

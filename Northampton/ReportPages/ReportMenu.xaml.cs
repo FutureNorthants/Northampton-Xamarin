@@ -10,11 +10,11 @@ namespace Northampton
         {
             InitializeComponent();
             Application.Current.Properties["ProblemDescription"] = "";
-            Analytics.TrackEvent("Started ReportIt");
         }
 
         async void AtThisLocationButtonClicked(object sender, EventArgs args)
         {
+            Analytics.TrackEvent("ReportIt - AtThisLocation Started");
             Application.Current.Properties["UsedLatLng"] = "true";
             Application.Current.Properties["WebServiceHandlerPageTitle"] = "Report a problem";
             Application.Current.Properties["WebServiceHandlerPageDescription"] = "Please wait whilst we find nearby streets";
@@ -24,6 +24,7 @@ namespace Northampton
 
         async void ByStreetNameButtonClicked(object sender, EventArgs args)
         {
+            Analytics.TrackEvent("ReportIt - ByStreetName Started");
             Application.Current.Properties["ProblemLat"] = "";
             Application.Current.Properties["ProblemLng"] = "";
             Application.Current.Properties["UsedLatLng"] = "false";

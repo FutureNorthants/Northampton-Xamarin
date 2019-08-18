@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using Microsoft.AppCenter.Analytics;
 using Newtonsoft.Json.Linq;
 using Plugin.Media.Abstractions;
 using Xamarin.Forms;
@@ -160,35 +160,38 @@ namespace Northampton
             else
             {
                 Application.Current.Properties["ProblemType"] = storedProblems[typePickerIndex].ProblemName;
+                Analytics.TrackEvent("ReportIt - " + storedProblems[typePickerIndex].ProblemDescription);
                 switch (updatesPickerIndex)
                 {
                     case 0:
-                        //Email
                         Application.Current.Properties["ProblemUpdates"] = "email";
                         break;
                     case 1:
-                        //Text
                         Application.Current.Properties["ProblemUpdates"] = "text";
                         break;
                     case 2:
                         Application.Current.Properties["ProblemUpdates"] = "none";
-                        //No Updates;
                         break;
                     default:
-                        Console.WriteLine("Updates setting not found");
+                        Analytics.TrackEvent("ReportIt - Unexpected ProblemUpdates", new Dictionary<string, string>
+                            {
+                                { "ProblemUpdates", updatesPicker.ToString() }
+                            });
+                        Application.Current.Properties["ProblemUpdates"] = "none";
                         break;
                 }
-
                 Application.Current.Properties["ProblemLocation"] = storedStreets[streetPickerIndex].StreetName;
                 Application.Current.Properties["ProblemUSRN"] = storedStreets[streetPickerIndex].USRN;
                 if (Application.Current.Properties["ProblemLat"].ToString().Equals(""))
                 {
+                    Analytics.TrackEvent("ReportIt - Used GPS");
                     Application.Current.Properties["ProblemLat"] = storedStreets[streetPickerIndex].Latitude;
                     Application.Current.Properties["ProblemLng"] = storedStreets[streetPickerIndex].Longtitude;
                 }
                 String tempIncludesImage = "";
                 if (includesImage)
                 {
+                    Analytics.TrackEvent("ReportIt - Used Photo");
                     tempIncludesImage = "true";
                     Application.Current.Properties["ProblemImage"] = imageData;
                 }
@@ -202,7 +205,7 @@ namespace Northampton
                 switch (updatesPickerIndex)
                 {
                     case 0:
-                        //Email
+                        Analytics.TrackEvent("ReportIt - Updates via Email");
                         if (Application.Current.Properties.ContainsKey("SettingsEmail"))
                         {
                             if (Application.Current.Properties.ContainsKey("SettingsName"))
@@ -220,7 +223,7 @@ namespace Northampton
                         }
                         break;
                     case 1:
-                        //Text
+                        Analytics.TrackEvent("ReportIt - Updates via Text");
                         if (Application.Current.Properties.ContainsKey("SettingsPhoneNumber"))
                         {
                             if (Application.Current.Properties.ContainsKey("SettingsName"))
@@ -238,7 +241,7 @@ namespace Northampton
                         }
                         break;
                     default:
-                        //None
+                        Analytics.TrackEvent("ReportIt - Updates Not Requested");
                         if (Application.Current.Properties.ContainsKey("SettingsName"))
                         {
                             await Navigation.PushAsync(new WebServiceHandlerPage("SendProblemToCRM"));
