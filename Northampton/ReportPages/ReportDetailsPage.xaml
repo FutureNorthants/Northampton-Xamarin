@@ -6,7 +6,7 @@
                 <maps:Map WidthRequest="320" HeightRequest="200" x:Name="ProblemMap" IsShowingUser="{Binding IsMapVisible}" MapType="Street" IsVisible="{Binding IsMapVisible}" />
                 <Picker x:Name="streetPicker" Title="Confirm the nearest street here" TitleColor="Gray" ItemsSource="{Binding streets}" SelectedIndex="{Binding StreetPickerIndex}" />
                 <Picker x:Name="typePicker" Title="Confirm the problem here" TitleColor="Gray" ItemsSource="{Binding problems}" SelectedIndex="{Binding TypePickerIndex}" />
-                <Editor Placeholder="Enter any more details here" PlaceholderColor="Gray" Keyboard="Text" AutoSize="TextChanges" HeightRequest="260" Completed="EditorCompleted" BackgroundColor="White"/>
+                <Editor Placeholder="Please provide details here" PlaceholderColor="Gray" Keyboard="Text" AutoSize="TextChanges" HeightRequest="260" Completed="EditorCompleted" BackgroundColor="White"/>
                 <Picker x:Name="updatesPicker" Title="Would you like updates?" TitleColor="Gray" SelectedIndex="{Binding UpdatesPickerIndex}">
                     <Picker.ItemsSource>
                         <x:Array Type="{x:Type x:String}">

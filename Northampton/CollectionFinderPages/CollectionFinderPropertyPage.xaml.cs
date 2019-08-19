@@ -9,9 +9,11 @@ namespace Northampton
     {
         private int propertyPickerIndex = -1;
         IList<Property> storedProperties = new List<Property>();
+        private String postCode;
 
-        public CollectionFinderPropertyPage()
+        public CollectionFinderPropertyPage(String paramPostCode)
         {
+            postCode = paramPostCode;
             InitializeComponent();
             BindingContext = this;
         }
@@ -25,7 +27,7 @@ namespace Northampton
             set
             {
                 propertyPickerIndex = value;
-                Navigation.PushAsync(new CollectionFinderResultPage(storedProperties[propertyPickerIndex].CollectionDay,storedProperties[propertyPickerIndex].CollectionType));
+                Navigation.PushAsync(new CollectionFinderResultPage(postCode, storedProperties[propertyPickerIndex].CollectionDay,storedProperties[propertyPickerIndex].CollectionType));
             }
         }
 

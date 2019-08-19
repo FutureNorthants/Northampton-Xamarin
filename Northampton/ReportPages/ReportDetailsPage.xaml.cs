@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Threading.Tasks;
+using Microsoft.AppCenter.Analytics;
 using Newtonsoft.Json.Linq;
 using Plugin.Media.Abstractions;
 using Xamarin.Forms;
@@ -48,8 +49,8 @@ namespace Northampton
                 var position = new Position(double.Parse(problemLat), double.Parse(problemLng));
                 ProblemMap.MoveToRegion(new MapSpan(position, 0.001, 0.001));
             }
-            storedProblems.Add(new Problem(0, "litter", "Litter"));
-            storedProblems.Add(new Problem(1, "flytip", "Flytipping"));
+            storedProblems.Add(new Problem(0, "Litter", "Litter"));
+            storedProblems.Add(new Problem(1, "Flytip", "Flytipping"));
             storedProblems.Add(new Problem(2, "bodily_fluids", "Bodily Fluids"));
             storedProblems.Add(new Problem(3, "broken_glass", "Broken Glass"));
             storedProblems.Add(new Problem(4, "dead_animal", "Dead Animal"));
@@ -62,7 +63,7 @@ namespace Northampton
             storedProblems.Add(new Problem(11, "gum_removal", "Gum Removal"));
             storedProblems.Add(new Problem(12, "leaf_clearance", "Leaf Clearance"));
             storedProblems.Add(new Problem(13, "overflowing_litter_bin", "Litter Bin Overflowing"));
-            storedProblems.Add(new Problem(14, "street_furniture_cleaning", "Street Sign Cleaning"));
+            storedProblems.Add(new Problem(14, "street_sign_clean", "Street Sign Cleaning"));
             storedProblems.Add(new Problem(15, "street_washing", "Street Washing"));
             storedProblems.Add(new Problem(16, "sweeper_bags_not_collected", "Sweeper Bags Not Collected"));
             storedProblems.Add(new Problem(17, "sweeping_required", "Sweeping Required"));
@@ -125,7 +126,7 @@ namespace Northampton
         {
             MediaFile photo = await Plugin.Media.CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
             {
-                PhotoSize = PhotoSize.Medium,
+                PhotoSize = PhotoSize.Medium
             });
 
             if (photo != null)
@@ -134,12 +135,9 @@ namespace Northampton
                 includesImage = true;
                 PhotoButton.IsVisible = false;
                 PhotoImage.Source = ImageSource.FromStream(() => { return photo.GetStream(); });
-                Stream imageString = photo.GetStream();
-                String tempStr = photo.ToString();
                 PhotoImage.IsVisible = true;
-                Application.Current.Properties["ProblemImage"] = photo.ToString();
-                await Application.Current.SavePropertiesAsync();
-            await ScrollView.ScrollToAsync(submitButton, ScrollToPosition.MakeVisible, true);
+                await Task.Delay(500);
+                await ScrollView.ScrollToAsync(submitButton, ScrollToPosition.MakeVisible, true);
             }
         }
 
@@ -153,6 +151,10 @@ namespace Northampton
             {
                 await DisplayAlert("Missing Information", "Please confirm the type of problem", "OK");
             }
+            else if (problemDescription.Length == 0)
+            {
+                await DisplayAlert("Missing Information", "Please provide as many details as possible, it helps us to fix the problem first time", "OK");
+            }
             else if (updatesPickerIndex == -1)
             {
                 await DisplayAlert("Missing Information", "Please confirm if you would like updates on resolving this problem", "OK");
@@ -160,35 +162,38 @@ namespace Northampton
             else
             {
                 Application.Current.Properties["ProblemType"] = storedProblems[typePickerIndex].ProblemName;
+                Analytics.TrackEvent("ReportIt - " + storedProblems[typePickerIndex].ProblemDescription);
                 switch (updatesPickerIndex)
                 {
                     case 0:
-                        //Email
                         Application.Current.Properties["ProblemUpdates"] = "email";
                         break;
                     case 1:
-                        //Text
                         Application.Current.Properties["ProblemUpdates"] = "text";
                         break;
                     case 2:
                         Application.Current.Properties["ProblemUpdates"] = "none";
-                        //No Updates;
                         break;
                     default:
-                        Console.WriteLine("Updates setting not found");
+                        Analytics.TrackEvent("ReportIt - Unexpected ProblemUpdates", new Dictionary<string, string>
+                            {
+                                { "ProblemUpdates", updatesPicker.ToString() }
+                            });
+                        Application.Current.Properties["ProblemUpdates"] = "none";
                         break;
                 }
-
                 Application.Current.Properties["ProblemLocation"] = storedStreets[streetPickerIndex].StreetName;
                 Application.Current.Properties["ProblemUSRN"] = storedStreets[streetPickerIndex].USRN;
                 if (Application.Current.Properties["ProblemLat"].ToString().Equals(""))
                 {
+                    Analytics.TrackEvent("ReportIt - Used GPS");
                     Application.Current.Properties["ProblemLat"] = storedStreets[streetPickerIndex].Latitude;
                     Application.Current.Properties["ProblemLng"] = storedStreets[streetPickerIndex].Longtitude;
                 }
                 String tempIncludesImage = "";
                 if (includesImage)
                 {
+                    Analytics.TrackEvent("ReportIt - Used Photo");
                     tempIncludesImage = "true";
                     Application.Current.Properties["ProblemImage"] = imageData;
                 }
@@ -202,7 +207,7 @@ namespace Northampton
                 switch (updatesPickerIndex)
                 {
                     case 0:
-                        //Email
+                        Analytics.TrackEvent("ReportIt - Updates via Email");
                         if (Application.Current.Properties.ContainsKey("SettingsEmail"))
                         {
                             if (Application.Current.Properties.ContainsKey("SettingsName"))
@@ -220,7 +225,7 @@ namespace Northampton
                         }
                         break;
                     case 1:
-                        //Text
+                        Analytics.TrackEvent("ReportIt - Updates via Text");
                         if (Application.Current.Properties.ContainsKey("SettingsPhoneNumber"))
                         {
                             if (Application.Current.Properties.ContainsKey("SettingsName"))
@@ -238,7 +243,7 @@ namespace Northampton
                         }
                         break;
                     default:
-                        //None
+                        Analytics.TrackEvent("ReportIt - Updates Not Requested");
                         if (Application.Current.Properties.ContainsKey("SettingsName"))
                         {
                             await Navigation.PushAsync(new WebServiceHandlerPage("SendProblemToCRM"));
