@@ -413,7 +413,7 @@ namespace Northampton
                                 { "ProblemUsedGPS", Application.Current.Properties["UsedLatLng"] as String },
                                 { "ProblemUsedImage", Application.Current.Properties["ProblemUsedImage"] as String },
                             });
-                        await DisplayAlert("Error", "Sorry, there has been an enexpected response (" + jsonResult.Substring(errorIndex + 12, 3) + "). This has been reported to our Digital Service, please try again later.", "OK");
+                        await DisplayAlert("Error", "Sorry, there has been an unexpected response (" + jsonResult.Substring(errorIndex + 12, 3) + "). This has been reported to our Digital Service, please try again later.", "OK");
                         await Navigation.PopAsync();
                     }
                     else
