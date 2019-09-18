@@ -144,7 +144,7 @@ namespace Northampton
                     await ScrollView.ScrollToAsync(submitButton, ScrollToPosition.MakeVisible, true);
                 }
             }
-            catch(PermissionException error)
+            catch(MediaPermissionException error)
             {
                 Crashes.TrackError(error, new Dictionary<string, string> { });
                 await DisplayAlert("No permissions", "Sorry, we need permission to access your camera.", "OK");
