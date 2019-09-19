@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using Xamarin.Forms;
 
 namespace Northampton
@@ -20,7 +22,17 @@ namespace Northampton
 
         private void GetCollectionInfoButtonClicked(object sender, EventArgs e)
         {
-            ProcessPostcode(Application.Current.Properties["CollectionFinderPostcode"] as String);
+            Task.Delay(500);
+            try
+            {
+                ProcessPostcode(Application.Current.Properties["CollectionFinderPostcode"] as String);
+            }
+            catch(Exception error)
+            {
+                Crashes.TrackError(error, new Dictionary<string, string> { });
+                DisplayAlert("Memory Error", "Sorry, there has been a system error. This has been reported to our Digital Service, please try again later.", "OK");
+            }
+            
         }
 
         private void ProcessPostcode(String postCode)
