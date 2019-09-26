@@ -5204,7 +5204,7 @@ namespace Northampton.Droid
 			public const int ic_vol_type_tv_light = 2130837793;
 			
 			// aapt resource value: 0x7f020122
-			public const int Icon = 2130837794;
+			public const int icon = 2130837794;
 			
 			// aapt resource value: 0x7f020123
 			public const int mr_button_connected_dark = 2130837795;

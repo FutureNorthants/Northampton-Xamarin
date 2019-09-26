@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using Newtonsoft.Json.Linq;
 using Plugin.Media.Abstractions;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 
@@ -124,21 +126,30 @@ namespace Northampton
 
         private async void TakePhotoButtonClicked(object sender, EventArgs e)
         {
-            MediaFile photo = await Plugin.Media.CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
+            try
             {
-                PhotoSize = PhotoSize.Medium
-            });
+                MediaFile photo = await Plugin.Media.CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
+                {
+                    PhotoSize = PhotoSize.Medium
+                });
 
-            if (photo != null)
-            {
-                imageData = photo;
-                includesImage = true;
-                PhotoButton.IsVisible = false;
-                PhotoImage.Source = ImageSource.FromStream(() => { return photo.GetStream(); });
-                PhotoImage.IsVisible = true;
-                await Task.Delay(500);
-                await ScrollView.ScrollToAsync(submitButton, ScrollToPosition.MakeVisible, true);
+                if (photo != null)
+                {
+                    imageData = photo;
+                    includesImage = true;
+                    PhotoButton.IsVisible = false;
+                    PhotoImage.Source = ImageSource.FromStream(() => { return photo.GetStream(); });
+                    PhotoImage.IsVisible = true;
+                    await Task.Delay(500);
+                    await ScrollView.ScrollToAsync(submitButton, ScrollToPosition.MakeVisible, true);
+                }
             }
+            catch(MediaPermissionException error)
+            {
+                Crashes.TrackError(error, new Dictionary<string, string> { });
+                await DisplayAlert("No permissions", "Sorry, we need permission to access your camera.", "OK");
+            }
+ 
         }
 
         async void SubmitButtonClicked(object sender, EventArgs args)
