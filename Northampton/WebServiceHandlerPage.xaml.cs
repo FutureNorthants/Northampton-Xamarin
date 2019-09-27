@@ -571,6 +571,7 @@ namespace Northampton
                 }
                 catch (Exception error)
                 {
+                    noPostcodeFound = true;
                     Crashes.TrackError(error, new Dictionary<string, string>{
                         { "Postcode", postCode }
                     });

@@ -39,7 +39,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Access to camera to take photos of issues</string>
 	<key>CFBundleShortVersionString</key>
-	<string>4.1</string>
+	<string>4.2.0</string>
 	<key>NSCalendarsUsageDescription</key>
 	<string>The app does not access or use any information from calendars</string>
 	<key>NSPhotoLibraryUsageDescription</key>
