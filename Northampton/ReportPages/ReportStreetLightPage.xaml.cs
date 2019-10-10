@@ -17,7 +17,7 @@ namespace Northampton
         {
             if (Int32.TryParse(((Entry)sender).Text, out streetLight))
             {
-                if (Regex.IsMatch(streetLight.ToString(), @"^[0-9]{6}$"))
+                if (Regex.IsMatch(streetLight.ToString(), @"^[0-9]{5}$"))
                 {
                     Application.Current.Properties["StreetLightID"] = streetLight.ToString();
                     await Application.Current.SavePropertiesAsync();
@@ -25,12 +25,12 @@ namespace Northampton
                 }
                 else
                 {
-                    await DisplayAlert("Missing Information", "Please enter the six digit Street Light ID found on the street light", "OK");
+                    await DisplayAlert("Missing Information", "Please enter the five digit Street Light ID found on the street light", "OK");
                 }
             }
             else
             {
-                await DisplayAlert("Missing Information", "Please enter the six digit Street Light ID found on the street light", "OK");
+                await DisplayAlert("Missing Information", "Please enter the five digit Street Light ID found on the street light", "OK");
             }
         }
     }
