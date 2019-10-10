@@ -352,20 +352,21 @@ namespace Northampton
         }
 
         protected override void OnAppearing()
-        { 
+        {
             if (typePicker.SelectedIndex == 4)
             {
                 if (Application.Current.Properties.ContainsKey("StreetLightID"))
                 {
-                    streetLightID = "Street Light Number " + Application.Current.Properties["StreetLightID"] as String;
+                    streetLightID = Application.Current.Properties["StreetLightID"] as String;
                 }
-                if (streetLightID is null)
+                if (streetLightID is null || streetLightID.Equals(""))
                 {
                     streetLightButton.IsVisible = true;
                     streetLightLabel.IsVisible = false;
                 }
                 else
                 {
+                    streetLightID = "Street Light Number " + streetLightID;
                     streetLightLabel.Text = streetLightID;
                     streetLightButton.IsVisible = false;
                     streetLightLabel.IsVisible = true;
