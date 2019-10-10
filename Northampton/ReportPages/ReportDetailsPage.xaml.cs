@@ -105,6 +105,13 @@ namespace Northampton
             {
                 typePickerIndex = value;
                 ScrollView.ScrollToAsync(updatesPicker, ScrollToPosition.MakeVisible, true);
+                if (value != 4)
+                {
+                    streetLightButton.IsVisible = false;
+                    streetLightLabel.IsVisible = false;
+                    Application.Current.Properties["StreetLightID"] = null;
+                    Application.Current.SavePropertiesAsync();
+                }              
             }
         }
 
@@ -350,9 +357,7 @@ namespace Northampton
             {
                 if (Application.Current.Properties.ContainsKey("StreetLightID"))
                 {
-                    streetLightID = Application.Current.Properties["StreetLightID"] as String;
-                    Application.Current.Properties["StreetLightID"] = null;
-                    Application.Current.SavePropertiesAsync();
+                    streetLightID = "Street Light Number " + Application.Current.Properties["StreetLightID"] as String;
                 }
                 if (streetLightID is null)
                 {
@@ -369,7 +374,9 @@ namespace Northampton
             else
             {
                 streetLightButton.IsVisible = false;
-                streetLightLabel.IsVisible = true;
+                streetLightLabel.IsVisible = false;
+                Application.Current.Properties["StreetLightID"] = null;
+                Application.Current.SavePropertiesAsync();
             }
         }
     }
