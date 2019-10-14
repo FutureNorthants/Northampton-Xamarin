@@ -315,6 +315,7 @@ namespace Northampton
             String problemLng = "";
             String problemEmail = "";
             String problemText = "";
+            String streetLightID = "";
 
             if (Application.Current.Properties.ContainsKey("ProblemType"))
             {
@@ -327,6 +328,10 @@ namespace Northampton
             if (Application.Current.Properties.ContainsKey("ProblemLng"))
             {
                 problemLng = Application.Current.Properties["ProblemLng"] as String;
+            }
+            if (Application.Current.Properties.ContainsKey("StreetLightID"))
+            {
+                streetLightID = Application.Current.Properties["StreetLightID"] as String;
             }
             if (Application.Current.Properties.ContainsKey("ProblemUpdates"))
             {
@@ -375,6 +380,7 @@ namespace Northampton
                 client.DefaultRequestHeaders.Add("ProblemPhone", problemText);
                 client.DefaultRequestHeaders.Add("ProblemName", Application.Current.Properties["SettingsName"] as String);
                 client.DefaultRequestHeaders.Add("ProblemUsedGPS", Application.Current.Properties["UsedLatLng"] as String);
+                client.DefaultRequestHeaders.Add("postref", streetLightID);
                 HttpContent content = null;
                 if (Application.Current.Properties["ProblemUsedImage"].ToString().Equals("true"))
                 {
@@ -412,6 +418,7 @@ namespace Northampton
                                 { "ProblemName", Application.Current.Properties["SettingsName"] as String },
                                 { "ProblemUsedGPS", Application.Current.Properties["UsedLatLng"] as String },
                                 { "ProblemUsedImage", Application.Current.Properties["ProblemUsedImage"] as String },
+                                { "StreetLightID", streetLightID },
                             });
                         await DisplayAlert("Error", "Sorry, there has been an unexpected response (" + jsonResult.Substring(errorIndex + 12, 3) + "). This has been reported to our Digital Service, please try again later.", "OK");
                         await Navigation.PopAsync();
@@ -449,6 +456,7 @@ namespace Northampton
                                 { "ProblemName", Application.Current.Properties["SettingsName"] as String },
                                 { "ProblemUsedGPS", Application.Current.Properties["UsedLatLng"] as String },
                                 { "ProblemUsedImage", Application.Current.Properties["ProblemUsedImage"] as String },
+                                { "StreetLightID", streetLightID },
                             });
                             await DisplayAlert("Error", "Sorry, there has been a system issue. This has been reported to our Digital Service, please try again later.", "OK");
                             await Navigation.PopAsync();
@@ -471,6 +479,7 @@ namespace Northampton
                     { "ProblemName", Application.Current.Properties["SettingsName"] as String },
                     { "ProblemUsedGPS", Application.Current.Properties["UsedLatLng"] as String },
                     { "ProblemUsedImage", Application.Current.Properties["ProblemUsedImage"] as String },
+                    { "StreetLightID", streetLightID },
                 });
                     await Task.Delay(5000);
                     await DisplayAlert("Error", "Sorry, there has been a system crash. This has been reported to our Digital Service, please try again later.", "OK");
@@ -495,6 +504,7 @@ namespace Northampton
                     { "ProblemName", Application.Current.Properties["SettingsName"] as String },
                     { "ProblemUsedGPS", Application.Current.Properties["UsedLatLng"] as String },
                     { "ProblemUsedImage", Application.Current.Properties["ProblemUsedImage"] as String },
+                    { "StreetLightID", streetLightID },
                 });
                 await Task.Delay(5000);
                 await DisplayAlert("No Connectivity", "Your device does not currently have an internet connection, please try again later.", "OK");
@@ -568,6 +578,39 @@ namespace Northampton
                             }
                         }    
                     }
+                    if (noPostcodeFound)
+                    {
+                        Analytics.TrackEvent("CollectionFinder - No details found", new Dictionary<string, string>
+                    {
+                        { "Postcode", postCode }
+                    });
+                        await DisplayAlert("Missing Information", "No collection details found for postcode '" + postCode + "', please check postcode and try again", "OK");
+                        await Navigation.PopAsync();
+                    }
+                    else
+                    {
+                        switch ((string)propertiesJSONobject.SelectToken("rounds"))
+                        {
+                            case "single":
+                                await Navigation.PushAsync(new CollectionFinderResultPage(postCode, (String)propertiesJSONobject.SelectToken("day"), (String)propertiesJSONobject.SelectToken("type")));
+                                break;
+                            case "multiple":
+                                await Navigation.PushAsync(new CollectionFinderPropertyPage(postCode));
+                                break;
+                            default:
+                                Analytics.TrackEvent("CollectionFinder - Unexpected Round", new Dictionary<string, string>
+                            {
+                                { "Postcode", postCode }
+                            });
+                                await DisplayAlert("Error", "Sorry, there has been an enexpected response. This has been reported to our Digital Service, please try again later.", "OK");
+                                await Navigation.PopAsync();
+                                break;
+                        }
+                        if (Navigation.NavigationStack.Count > 1)
+                        {
+                            Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
+                        }
+                    }
                 }
                 catch (Exception error)
                 {
@@ -576,39 +619,6 @@ namespace Northampton
                     });
                     await DisplayAlert("Error", "Sorry, there has been a system crash. This has been reported to our Digital Service, please try again later.", "OK");
                     await Navigation.PopAsync();
-                }
-                if (noPostcodeFound)
-                {
-                    Analytics.TrackEvent("CollectionFinder - No details found", new Dictionary<string, string>
-                    {
-                        { "Postcode", postCode }
-                    });
-                    await DisplayAlert("Missing Information", "No collection details found for postcode '" + postCode + "', please check postcode and try again", "OK");
-                    await Navigation.PopAsync();
-                }
-                else
-                {
-                    switch ((string)propertiesJSONobject.SelectToken("rounds"))
-                    {
-                        case "single":
-                            await Navigation.PushAsync(new CollectionFinderResultPage(postCode,(String)propertiesJSONobject.SelectToken("day"), (String)propertiesJSONobject.SelectToken("type")));                        
-                            break;
-                        case "multiple":
-                            await Navigation.PushAsync(new CollectionFinderPropertyPage(postCode));                           
-                            break;
-                        default:
-                            Analytics.TrackEvent("CollectionFinder - Unexpected Round", new Dictionary<string, string>
-                            {
-                                { "Postcode", postCode }
-                            });
-                            await DisplayAlert("Error", "Sorry, there has been an enexpected response. This has been reported to our Digital Service, please try again later.", "OK");
-                            await Navigation.PopAsync();
-                            break;
-                    }
-                    if (Navigation.NavigationStack.Count > 1)
-                    {
-                        Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
-                    }
                 }
             }
             else

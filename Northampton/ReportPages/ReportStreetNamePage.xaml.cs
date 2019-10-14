@@ -25,8 +25,6 @@ namespace Northampton
                 await Application.Current.SavePropertiesAsync();
                 await Navigation.PushAsync(new WebServiceHandlerPage("ReportMenuByStreet"));
             }
- 
-
         }
     }
 }

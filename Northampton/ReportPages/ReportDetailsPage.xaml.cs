@@ -5,7 +5,6 @@ using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Newtonsoft.Json.Linq;
 using Plugin.Media.Abstractions;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 
@@ -16,6 +15,7 @@ namespace Northampton
         private int streetPickerIndex = -1;
         private int typePickerIndex = -1;
         private int updatesPickerIndex = -1;
+        private String streetLightID = null;
         private String problemDescription = "";
         private Boolean isMapVisible = true;
         private Boolean includesImage = false;
@@ -55,6 +55,7 @@ namespace Northampton
             storedProblems.Add(new Problem(1, "Flytip", "Flytipping"));
             storedProblems.Add(new Problem(2, "bodily_fluids", "Bodily Fluids"));
             storedProblems.Add(new Problem(3, "broken_glass", "Broken Glass"));
+            storedProblems.Add(new Problem(19, "broken_street_lighting", "Broken Street Lighting"));
             storedProblems.Add(new Problem(4, "dead_animal", "Dead Animal"));
             storedProblems.Add(new Problem(5, "dog_fouling", "Dog Fouling"));
             storedProblems.Add(new Problem(6, "drug_paraphernalia", "Drug Paraphernalia"));
@@ -70,6 +71,14 @@ namespace Northampton
             storedProblems.Add(new Problem(16, "sweeper_bags_not_collected", "Sweeper Bags Not Collected"));
             storedProblems.Add(new Problem(17, "sweeping_required", "Sweeping Required"));
             storedProblems.Add(new Problem(18, "weed_clearance", "Weed Clearance"));
+
+            typePicker.SelectedIndexChanged += (sender, args) =>
+            {
+                if (typePicker.SelectedIndex == 4)
+                {
+                    Navigation.PushAsync(new ReportStreetLightPage());
+                }
+            };
             BindingContext = this;
         }
 
@@ -96,6 +105,13 @@ namespace Northampton
             {
                 typePickerIndex = value;
                 ScrollView.ScrollToAsync(updatesPicker, ScrollToPosition.MakeVisible, true);
+                if (value != 4)
+                {
+                    streetLightButton.IsVisible = false;
+                    streetLightLabel.IsVisible = false;
+                    Application.Current.Properties["StreetLightID"] = null;
+                    Application.Current.SavePropertiesAsync();
+                }              
             }
         }
 
@@ -124,7 +140,12 @@ namespace Northampton
             }
         }
 
-        private async void TakePhotoButtonClicked(object sender, EventArgs e)
+        private async void StreetLightButtonClicked(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new ReportStreetLightPage());
+        }
+
+            private async void TakePhotoButtonClicked(object sender, EventArgs e)
         {
             try
             {
@@ -327,6 +348,36 @@ namespace Northampton
             get
             {
                 return isMapVisible;
+            }
+        }
+
+        protected override void OnAppearing()
+        {
+            if (typePicker.SelectedIndex == 4)
+            {
+                if (Application.Current.Properties.ContainsKey("StreetLightID"))
+                {
+                    streetLightID = Application.Current.Properties["StreetLightID"] as String;
+                }
+                if (streetLightID is null || streetLightID.Equals(""))
+                {
+                    streetLightButton.IsVisible = true;
+                    streetLightLabel.IsVisible = false;
+                }
+                else
+                {
+                    streetLightID = "Street Light Number " + streetLightID;
+                    streetLightLabel.Text = streetLightID;
+                    streetLightButton.IsVisible = false;
+                    streetLightLabel.IsVisible = true;
+                }
+            }
+            else
+            {
+                streetLightButton.IsVisible = false;
+                streetLightLabel.IsVisible = false;
+                Application.Current.Properties["StreetLightID"] = null;
+                Application.Current.SavePropertiesAsync();
             }
         }
     }
