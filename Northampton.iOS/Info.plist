@@ -41,7 +41,7 @@
 	<key>NSCalendarsUsageDescription</key>
 	<string>The app does not access or use any information from calendars</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>The app does not access or use any information from the photo library</string>
+	<string>The app allows a user to select an photo they have previously taken to be added to the report they are sending us</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>The app does not use location other than when the user requests to report an issue using GPS</string>
 	<key>CFBundleShortVersionString</key>

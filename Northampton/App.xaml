@@ -3,8 +3,8 @@
     <Application.Resources>
         <ResourceDictionary>
             <Style TargetType="NavigationPage">
-                <Setter Property="BarBackgroundColor" Value="#264677" />
-                <Setter Property="BarTextColor" Value="Color.White" />
+                <Setter Property="BarBackgroundColor" Value="#386193" />
+                <Setter Property="BarTextColor" Value="White" />
             </Style>
             <Style x:Key="pageStyle" TargetType="ContentPage">
                 <Setter Property="BackgroundColor" Value="#dbdde0" />
@@ -13,12 +13,12 @@
             <Style x:Key="buttonStyle" TargetType="Button">
                 <Setter Property="HorizontalOptions" Value="Center" />
                 <Setter Property="VerticalOptions" Value="CenterAndExpand" />
-                <Setter Property="BackgroundColor" Value="#d4b474" />
-                <Setter Property="BorderColor" Value="Gray" />
+                <Setter Property="BackgroundColor" Value="#386193" />
+                <Setter Property="BorderColor" Value="Black" />
                 <Setter Property="CornerRadius" Value="10" />
-                <Setter Property="BorderWidth" Value="3" />
+                <Setter Property="BorderWidth" Value="1" />
                 <Setter Property="WidthRequest" Value="200" />
-                <Setter Property="TextColor" Value="Black" />
+                <Setter Property="TextColor" Value="White" />
             </Style>
         </ResourceDictionary>
     </Application.Resources>

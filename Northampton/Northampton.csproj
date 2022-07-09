@@ -21,6 +21,7 @@
     <PackageReference Include="Microsoft.AppCenter.Analytics" Version="4.5.1" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="4.5.1" />
     <PackageReference Include="Xam.Plugin.Media" Version="5.0.1" />
+    <PackageReference Include="ExifLib.PCL" Version="1.0.1" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Remove="MainTab.xaml" />
@@ -46,5 +47,11 @@
     <Folder Include="ReportPages\" />
     <Folder Include="Helpers\" />
     <Folder Include="CollectionFinderPages\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Services\" />
+    <None Remove="MetadataExtractor" />
+    <None Remove="ExifLib.PCL" />
   </ItemGroup>
 </Project>
