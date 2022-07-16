@@ -169,10 +169,10 @@ namespace Northampton
                     else
                     {
                         Analytics.TrackEvent("ReportIt - GetLocationByGPS Successful");
-                        await Navigation.PushAsync(new ReportDetailsPage(true));
+                        //await Navigation.PushAsync(new ReportDetailsPage(true));
                         if (Navigation.NavigationStack.Count > 1)
                         {
-                            Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 2]);
+                            Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 1]);
                         }
                     }
                 }
